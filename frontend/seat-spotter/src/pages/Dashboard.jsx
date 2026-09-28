@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../components/navbar";
+import "../styles/dashboard.css"
 
 const Dashboard = () => {
     // Read user from localStorage to determine role
@@ -17,7 +18,7 @@ const Dashboard = () => {
     // </svg>
     return (
         <>
-            <div className="min-h-screen bg-[#FFFCF1] font-sans">
+            <div className="dashboard-body">
                 <Navbar />
             </div>
         </>

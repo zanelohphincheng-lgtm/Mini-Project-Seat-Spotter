@@ -28,7 +28,7 @@ const Cafes = () => {
 
     const cafeDetail = (e) => {
       e.preventDefault()
-      navigate(`/cafes/${id}`)
+      navigate(`/cafes/${cafes.id}`)
     }
 
     const initialCafes = [

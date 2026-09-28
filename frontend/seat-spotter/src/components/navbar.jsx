@@ -5,7 +5,6 @@ import "../styles/navbar.css"
 const Navbar = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     // Retrieve auth info from localStorage
     const token = localStorage.getItem("token");
@@ -30,12 +29,12 @@ const Navbar = () => {
             {/* Navigation Links */}
             <div className="flex items-center gap-6">
                 {/* Home Button */}
-                <Link to="/" className="nav-btn-custom">
+                <Link to="/" className={isActive("/") ? "nav-btn-custom active" : "nav-btn-custom"}>
                     Home
                 </Link>
 
                 {/* Cafes Button */}
-                <Link to="/cafes" className="nav-btn-custom">
+                <Link to="/cafes" className={isActive("/cafes") ? "nav-btn-custom active" : "nav-btn-custom"}>
                     Cafes
                 </Link>
 
@@ -44,7 +43,7 @@ const Navbar = () => {
                     <>
                         {/* Logged In View: User Dropdown */}
                         {/* Dashboard Button */}
-                        <Link to="/dashboard" className="nav-btn-pill">
+                        <Link to="/dashboard" className={isActive("/dashboard") ? "nav-btn-custom active" : "nav-btn-custom"}>
                             Dashboard
                         </Link>
                         {/* Logout Button */}

@@ -5,7 +5,6 @@ import { useNavigate } from "react-router";
 import "../styles/userLoginPage.css";
 
 const Login = () => {
-    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -16,17 +15,16 @@ const Login = () => {
     useEffect(() => {
         const userToken = localStorage.getItem("token");
         console.log(userToken);
-        if (userToken !== null) navigate("/products");
+        if (userToken !== null) navigate("/");
     }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         // 💡 Add your login / authentication logic here
-        console.log("Form submitted:", { name, email, password });
+        console.log("Form submitted:", {email, password });
         try {
             const response = await api.post("/users/login", {
-                name,
                 email,
                 password,
             });
@@ -34,9 +32,10 @@ const Login = () => {
             navigate("/");
             console.log(response.data);
             alert("Login Successful!");
+            // if(user.password != password) alert("Info incorrect! Check your username, email and password!")
         } catch (error) {
-            console.error("Login Error:", err);
-            setError(err.response?.data?.message || "Login failed. Please check your connection.");
+            console.error("Login Error:", error);
+            alert("Login failed. Please check your connection or user info.");
         } finally {
             setLoading(false);
         }
@@ -62,21 +61,16 @@ const Login = () => {
                 {error && <div className="user-login-page-label">{error}</div>}
                 {/* Registration Form */}
                 <form onSubmit={handleSubmit} className="input-container">
-                    {/* Username Field */}
-                    <div>
-                        <label className="input-label">Username</label>
-                        <input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" required className="user-login-page-input" />
-                    </div>
 
                     {/* Email Field */}
                     <div>
-                        <label className="input-label">Email</label>
+                        <label className="input-label">Email :</label>
                         <input type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required className="user-login-page-input" />
                     </div>
 
                     {/* Password Field */}
                     <div>
-                        <label className="input-label">Password</label>
+                        <label className="input-label">Password :</label>
                         <input type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required minLength="6" className="user-login-page-input" />
                     </div>
 

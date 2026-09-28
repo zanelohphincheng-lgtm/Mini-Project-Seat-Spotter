@@ -55,19 +55,19 @@ const Register = () => {
                 <form onSubmit={handleSubmit} className="input-container">
                     {/* Username Field */}
                     <div>
-                        <label className="input-label">Username</label>
+                        <label className="input-label">Username :</label>
                         <input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" required className="user-login-page-input" />
                     </div>
 
                     {/* Email Field */}
                     <div>
-                        <label className="input-label">Email</label>
+                        <label className="input-label">Email :</label>
                         <input type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required className="user-login-page-input" />
                     </div>
 
                     {/* Password Field */}
                     <div>
-                        <label className="input-label">Password</label>
+                        <label className="input-label">Password :</label>
                         <input type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required minLength="6" className="user-login-page-input" />
                     </div>
 
