@@ -1,5 +1,111 @@
+/* --- Page Layout --- */
 .dashboard-body {
-    background-color: #fffcf1;
+    background-color: #fffcf1; /* Cream background matching header */
     min-height: 100vh;
     padding-bottom: 3rem;
+}
+
+.dashboard-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+/* --- Card Grid Layout --- */
+.dashboard-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 2.5rem;
+}
+
+/* --- Action Cards --- */
+.dashboard-card {
+    background-color: #fcebd9; /* Lighter beige inner card color[cite: 16, 17] */
+    border: 3.5px solid #000000; /* Bold black outline[cite: 16, 17] */
+    border-radius: 20px;
+    width: 340px;
+    height: 270px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Icon Containers (Black Shapes) --- */
+.card-icon-circle {
+    background-color: #000000;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%; /* Circle for icons[cite: 16, 17] */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 3rem;
+    margin-top: 0.5rem;
+}
+
+.card-icon-pill {
+    background-color: #000000;
+    width: 290px;
+    height: 100px;
+    border-radius: 50px; /* Pill shape for text labels like RESERVE / REVIEW[cite: 16, 17] */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-top: 0.5rem;
+}
+
+/* --- Action Buttons --- */
+.dashboard-btn {
+    background-color: #a04e4e; /* Terracotta brown button color[cite: 16, 17] */
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-decoration: none;
+    text-align: center;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.dashboard-btn:hover {
+    background-color: #883f3f;
+}
+
+/* --- Back Button for Sub-Views --- */
+.back-btn {
+    background: transparent;
+    border: none;
+    color: #a04e4e;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0;
+    margin-bottom: 1.5rem;
+}
+
+.back-btn:hover {
+    text-decoration: underline;
 }

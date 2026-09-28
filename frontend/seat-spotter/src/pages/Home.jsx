@@ -5,12 +5,12 @@ import "../styles/home.css"
 
 const Home = () => {
   return (
-    <div>
+    <div className='home-body'>
 
         <Navbar/>
 
       {/* Hero Section */}
-      <main className="home-body">
+      <main className="home-container">
         {/* Left Side: Cafe Image Container */}
         <div className="hero-image-container">
           <img

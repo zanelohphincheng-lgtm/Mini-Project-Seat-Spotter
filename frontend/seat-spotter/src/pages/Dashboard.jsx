@@ -1,25 +1,63 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router";
 import Navbar from "../components/navbar";
-import "../styles/dashboard.css"
+import "../styles/dashboard.css";
 
 const Dashboard = () => {
+    const [cafe, setCafe] = useState([]);
     // Read user from localStorage to determine role
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     const isAdmin = user.role === "admin";
 
-    // Regular user state: 'bookmark' or 'reservation'
-    const [activeTab, setActiveTab] = useState("bookmark");
+    const navigate = useNavigate();
 
-    // <svg viewBox="0 0 24 24">
-    //      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-    // </svg>
-    // <svg viewBox="0 0 24 24">
-    //      <path d="M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zm0 5h-2V5h2v3zM4 19h16v2H4z" />
-    // </svg>
+    if (isAdmin) {
+        return (
+            <>
+                <div className="dashboard-body">
+                <Navbar />
+
+                <div className="dashboard-container">
+                    <div className="dashboard-grid">
+                        <div className="dashboard-card">
+                            <i className="bi bi-people card-icon-circle"></i>
+                            <Link to="/manage-user" className="dashboard-btn">Manage User</Link>
+                        </div>
+                        <div className="dashboard-card">
+                            <i className="bi bi-cup card-icon-circle"></i>
+                            <Link to="/manage-cafe" className="dashboard-btn">Manage Cafe</Link>
+                        </div>
+                        <div className="dashboard-card">
+                            <i className="card-icon-pill">RESERVATION</i>
+                            <Link to="/manage-reservation" className="dashboard-btn">Manage Reservation</Link>
+                        </div>
+                        <div className="dashboard-card">
+                            <i className="card-icon-pill">REVIEW</i>
+                            <Link to="/manage-review" className="dashboard-btn">Manage Review</Link>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </>
+        );
+    }
     return (
         <>
             <div className="dashboard-body">
                 <Navbar />
+
+                <div className="dashboard-container">
+                    <div className="dashboard-grid">
+                        <div className="dashboard-card">
+                            <i className="bi bi-journal card-icon-circle"></i>
+                            <Link to="/user-bookmark" className="dashboard-btn">View Bookmark</Link>
+                        </div>
+                        <div className="dashboard-card">
+                            <i className="card-icon-pill">RESERVATION</i>
+                            <Link to="/user-reservation" className="dashboard-btn">View Reservation</Link>
+                        </div>
+                    </div>
+                </div>
             </div>
         </>
     );
