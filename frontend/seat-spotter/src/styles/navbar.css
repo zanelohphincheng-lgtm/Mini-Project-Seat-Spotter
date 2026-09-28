@@ -1,0 +1,101 @@
+/* Background styling for the navbar */
+.nav-body {
+    background-color: #ffe9d3;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.navbar {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-left: 35px;
+    margin-right: 35px;
+}
+
+/* Brand Logo Styling */
+.brand-title {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    font-style: italic;
+    text-decoration: none;
+    color: #1a1a1a !important;
+}
+
+/* Basic Navigation Links (Home, Cafes) */
+.nav-btn-custom {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #000000 !important;
+    padding: 0.5rem 1.25rem !important;
+    border-radius: 50px;
+    margin-left: 15px;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-btn-custom:hover,
+.nav-btn-custom.active {
+    background-color: #a35252;
+    color: #ffffff !important;
+}
+
+/* Pill Navigation Buttons (Dashboard, Sign Up) */
+.nav-btn-pill {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #000000 !important;
+    text-decoration: none;
+    padding: 0.5rem 1.5rem !important;
+    margin-left: 15px;
+    border-radius: 50px;
+    border: 2px solid #ffe9d3;
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-btn-pill:hover,
+.nav-btn-pill.active {
+    background-color: #a35252;
+    border-color: #a35252;
+    color: #ffffff !important;
+}
+
+/* Login Outline Button */
+.btn-login-outline {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #000000 !important;
+    padding: 0.5rem 1.5rem !important;
+    text-decoration: none;
+    margin-left: 15px;
+    border-radius: 50px;
+    border: 2px solid #a35252;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-login-outline:hover,
+.btn-login-outline.active {
+    background-color: #a35252;
+    color: #ffffff !important;
+}
+
+/* Red Logout Button */
+.btn-logout-custom {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #ffffff;
+    background-color: #e92d30;
+    border: 2px solid #e92d30;
+    padding: 0.5rem 1.5rem;
+    margin-left: 15px;
+    margin-right: 15px;
+    border-radius: 50px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.btn-logout-custom:hover {
+    background-color: #bb2124;
+    border-color: #bb2124;
+}

@@ -1,0 +1,106 @@
+/* Container Background & Spacing */
+.home-body {
+  background-color: #FFFCF1; /* Matching beige theme */
+  /* padding-top: 90px; */
+  display: flex;
+  align-items: center;
+  padding: 2rem 0;
+  padding-left: 50px;
+  padding-bottom: 122px;
+}
+
+/* Left Column: Cafe Photo Container */
+.hero-image-container {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.hero-image {
+  width: 100%;
+  height: 480px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Right Column: Content Alignment */
+.hero-content {
+  padding: 1rem 2rem;
+  margin-left: 15px;
+}
+
+/* Brand Logo Box (S Icon + SeatSpotter text) */
+.hero-brand-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand-icon-box {
+  width: 65px;
+  height: 65px;
+  background: linear-gradient(135deg, #ff8a00, #e52e71);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(229, 46, 113, 0.3);
+}
+
+.brand-icon-letter {
+  color: #ffffff;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.hero-brand-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 3rem;
+  font-weight: 700;
+  font-style: italic;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+/* Main Heading Text */
+.hero-heading {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #000000;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+/* Gradient CTA Button */
+.btn-cta {
+  background: linear-gradient(90deg, #ff9f1c 0%, #e63946 100%) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-size: 1.4rem !important;
+  font-weight: 700 !important;
+  color: white;
+  text-decoration: none;
+  padding: 0.9rem 2rem !important;
+  box-shadow: 0 6px 16px rgba(230, 57, 70, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.btn-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(230, 57, 70, 0.4);
+}
+
+/* Responsive Tweaks */
+@media (max-width: 991px) {
+  .hero-image {
+    height: 350px;
+  }
+  
+  .hero-heading {
+    font-size: 2.2rem;
+  }
+
+  .hero-brand-title {
+    font-size: 2.4rem;
+  }
+}
