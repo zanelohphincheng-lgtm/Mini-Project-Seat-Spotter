@@ -12,6 +12,7 @@ const Login = () => {
 
     const navigate = useNavigate();
 
+    // Prevent User to login again after logging in already :)
     useEffect(() => {
         const userToken = localStorage.getItem("token");
         console.log(userToken);
@@ -29,7 +30,8 @@ const Login = () => {
                 password,
             });
             localStorage.setItem("token", response.data.token);
-            navigate("/");
+            localStorage.setItem("user", JSON.stringify(response.data.user))
+            navigate("/dashboard");
             console.log(response.data);
             alert("Login Successful!");
             // if(user.password != password) alert("Info incorrect! Check your username, email and password!")

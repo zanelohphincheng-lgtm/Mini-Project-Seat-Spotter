@@ -1,0 +1,98 @@
+.manage-user-body {
+    background-color: #fdf5eb;
+    min-height: 100vh;
+}
+
+.manage-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+}
+
+/* Search Bar */
+.search-bar-container {
+    position: relative;
+    max-width: 320px;
+}
+
+.search-input {
+    width: 100%;
+    background-color: #a04e4e;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 8px 35px 8px 35px;
+    font-weight: bold;
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ffffff;
+}
+
+.clear-search-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+}
+
+/* Table Design */
+.manage-table-card {
+    background-color: #fcebd9;
+    border: 3.5px solid #a04e4e;
+    border-radius: 20px;
+}
+
+.user-table th {
+    font-size: 1.6rem;
+    font-weight: 700;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #000000;
+}
+
+.user-table td {
+    font-size: 1.5rem;
+    padding: 0.8rem 0;
+}
+
+/* Action Icons */
+.action-icon-btn {
+    border: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.action-icon-btn:hover {
+    transform: scale(1.08);
+}
+
+.btn-key {
+    background-color: #10b981; /* Green */
+}
+
+.btn-pencil {
+    background-color: #f59e0b; /* Yellow/Orange */
+}
+
+.btn-trash {
+    background-color: #ef4444; /* Red */
+}

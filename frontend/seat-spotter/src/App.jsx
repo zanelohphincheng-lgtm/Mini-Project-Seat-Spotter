@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Cafes from "./pages/Cafes";
 import CafeDetail from "./pages/CafesDetails";
 import Dashboard from "./pages/Dashboard";
+import ManageUser from "./pages/ManageUser";
 
 function App() {
     return (
@@ -19,6 +20,7 @@ function App() {
                 <Route path="/cafes" element={<Cafes />} />
                 <Route path="/cafes/:id" element={<CafeDetail />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/manage-user" element={<ManageUser />} />
             </Routes>
         </BrowserRouter>
     );
