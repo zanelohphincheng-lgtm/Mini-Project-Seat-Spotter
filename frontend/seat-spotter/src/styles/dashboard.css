@@ -2,7 +2,6 @@
 .dashboard-body {
     background-color: #fffcf1; /* Cream background matching header */
     min-height: 100vh;
-    padding-bottom: 3rem;
 }
 
 .welcome-text{
@@ -10,7 +9,7 @@
     color: #1a1a1a !important;
     display: flex;
     justify-content: center;
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
 .welcome-text-p1{
@@ -29,9 +28,9 @@
 }
 
 .dashboard-container {
-    max-width: 1100px;
+    max-width: 1000px;
     margin: 0 auto;
-    padding: 2rem 1rem;
+    padding: 1rem 1rem;
 }
 
 /* --- Card Grid Layout --- */
