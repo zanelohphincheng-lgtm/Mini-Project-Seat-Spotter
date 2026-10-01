@@ -1,22 +1,57 @@
 .manage-body {
     background-color: #fffcf1;
-    min-height: 1250px;
-    padding: 25px;
+    min-height: 100vh !important;
+    padding: 25px 50px;
 }
 
-.top-section-container{
+.top-section-container {
     display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
 }
 
-.manage-back-btn{
+.manage-back-btn {
+    background-color: #fffcf1;
+    border: 1px solid #a04e4e;
+    color: #a04e4e;
+    display: flex;
+    margin: 0;
+    padding: 10px 20px 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.manage-back-btn:hover{
     background-color: #a04e4e;
     color: white;
-    /* display: flex; */
-    margin: 0;
 }
 
-.manage-back-text{
+.manage-add-btn{
+    display: flex;
+    background-color: #a04e4e;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #8a4343 !important;
+}
+
+.manage-add-btn:hover,
+.manage-add-btn:active{
+    background-color: #8a4343 !important;
+    border: 1px solid #8a4343 !important;
+}
+
+.manage-add-text{
+    font-weight: bold;
+    margin-left: 5px;
+    color: white;
     margin-bottom: 0 !important;
+}
+
+.manage-back-text {
+    margin-bottom: 0 !important;
+    margin-left: 5px;
 }
 
 .manage-title {
@@ -27,11 +62,7 @@
 /* Search Bar */
 .search-bar-container {
     position: relative;
-    max-width: 1000px;
-}
-
-.search-icon{
-    padding-bottom: 28px;
+    max-width: 500px;
 }
 
 .search-input {
@@ -56,34 +87,58 @@
     color: #ffffff;
 }
 
-.clear-search-btn {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.2rem;
-}
-
 /* Table Design */
 .manage-table-card {
+    margin-top: 10px;
     background-color: #fcebd9;
     border: 3.5px solid #a04e4e;
     border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
 }
 
-.user-table th {
+.manage-table th {
     font-size: 1.6rem;
     font-weight: 700;
     padding-bottom: 1rem;
     border-bottom: 2px solid #000000;
 }
 
-.user-table td {
-    font-size: 1.5rem;
+.manage-table td {
+    font-size: 1.4rem;
     padding: 0.8rem 0;
+}
+
+.manage-table-v2 th {
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #000000;
+}
+
+.manage-table-v2 td {
+    font-size: 1.0rem;
+    padding: 0.8rem 0;
+}
+
+.first-column {
+    padding-right: 10px;
+    text-align: center;
+}
+.second-column {
+    padding-right: 150px;
+}
+.thrid-column {
+    padding-right: 450px;
+}
+.forth-column {
+    padding-right: 290px;
+
+}
+.final-column {
+    padding: 0 20px 0 20px;
+    text-align: center;
 }
 
 /* Action Icons */
@@ -91,31 +146,70 @@
     border: none;
     width: 42px;
     height: 42px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     color: white;
     font-size: 1.2rem;
     cursor: pointer;
-    transition: transform 0.1s ease;
+    transition: transform 0.2s ease-in-out;
 }
 
 .action-icon-btn:hover {
     transform: scale(1.08);
+    border-radius: 50%;
 }
 
 .btn-key {
     background-color: #10b981; /* Green */
     border-radius: 5px;
+    margin-right: 5px;
 }
 
 .btn-pencil {
     background-color: #f59e0b; /* Yellow/Orange */
     border-radius: 5px;
+    margin-right: 5px;
 }
 
 .btn-trash {
     background-color: #ef4444; /* Red */
     border-radius: 5px;
+}
+
+.btn-key:hover {
+    background-color: #0ea573; /* Green */
+    margin-right: 5px;
+}
+
+.btn-pencil:hover {
+    background-color: #d2890a; /* Yellow/Orange */
+    margin-right: 5px;
+}
+
+.btn-trash:hover {
+    background-color: #d33c3c; /* Red */
+}
+
+.modal-form-input {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.submit-btn{
+    background-color: #a04e4e;
+    color: white;
+    border-radius: 25px;
+    padding: 5px 15px 5px 15px;
+    font-weight: bold;
+}
+
+.delete-form{
+    text-align: center;
+}
+
+.delete-btn{
+    background-color: red;
+    color: white;
+    border-radius: 25px;
+    padding: 5px 15px 5px 15px;
+    font-weight: bold;
 }

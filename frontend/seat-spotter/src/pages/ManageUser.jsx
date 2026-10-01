@@ -34,7 +34,7 @@ const ManageUser = () => {
 
     // Form Inputs for Modals
     const [newPassword, setNewPassword] = useState("");
-    const [newUser, setNewUser] = useState({ name: "", email: "", role: "user" });
+    const [newUser, setNewUser] = useState({ name: "", email: "", password:"", role: "" });
     const [selectedUser, setSelectedUser] = useState({ name: "", email: "", role: "user" });
 
     useEffect(() => {
@@ -57,7 +57,7 @@ const ManageUser = () => {
 
     // --- Modal Handlers ---
     const handleOpenAddModal = () => {
-        setNewUser({ name: "", email: "", role: "" });
+        setNewUser({ name: "", email: "", password: "", role: "" });
         setShowAddModal(true);
     };
 
@@ -88,8 +88,9 @@ const ManageUser = () => {
     const handleAddUser = async (e) => {
         e.preventDefault();
         try {
-            await api.post(`/users`, newUser);
-            setUsers([...users, res.data.data || res.data])
+            const res = await api.post(`/users`, newUser);
+            const createdUser = res.data.data || res.data;
+            setUsers([...users, createdUser])
             alert(`New user has been added!`);
             setShowAddModal(false);
         } catch (err) {
@@ -113,7 +114,7 @@ const ManageUser = () => {
     const handleUpdateUser = async (e) => {
         e.preventDefault();
         try {
-            const res = await api.put(`/users/${selectedUser._id}`, selectedUser);
+            const res = await api.patch(`/users/${selectedUser._id}`, selectedUser);
             setUsers(users.map((u) => (u._id === selectedUser._id ? { ...u, ...selectedUser } : u)));
             alert("User updated successfully!");
             setShowEditModal(false);
@@ -123,7 +124,8 @@ const ManageUser = () => {
         }
     };
 
-    const handleDeleteUser = async () => {
+    const handleDeleteUser = async (e) => {
+        e.preventDefault();
         try {
             await api.delete(`/users/${selectedUser._id}`);
             setUsers(users.filter((u) => u._id !== selectedUser._id));
@@ -140,45 +142,47 @@ const ManageUser = () => {
             <div className="top-section-container">
                 <Link to="/dashboard" className="manage-back-btn">
                     <i className="bi bi-arrow-left"></i>
-                    <p className="mange-back-text">Back to dashboard</p>
+                    <p className="manage-back-text">Back to dashboard</p>
                 </Link>
-                <h3 className="manage-title">Manage User</h3>
-                <div className="search-bar-container">
-                    <i className="bi bi-search search-icon"></i>
-                    <input className="search-input" type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="name, name@example.com" />
-                </div>
-                <Button onClick={() => handleOpenAddModal(newUser)} className="add-user-btn">
-                    Add New User
+                <Button onClick={() => handleOpenAddModal(newUser)} className="manage-add-btn">
+                    <i className="bi bi-plus-circle"></i>
+                    <p className="manage-add-text">Add New User</p>
                 </Button>
             </div>
 
-            <div>
-                <table className="table-container">
+            <h3 className="manage-title">Manage User</h3>
+            <div className="search-bar-container">
+                <i className="bi bi-search search-icon"></i>
+                <input className="search-input" type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="name, name@example.com" />
+            </div>
+
+            <div className="manage-table-card">
+                <table className="manage-table">
                     <thead>
                         <tr>
-                            <th>No.</th>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Action</th>
+                            <th className="first-column">No.</th>
+                            <th className="second-column">Username</th>
+                            <th className="thrid-column">Email</th>
+                            <th className="forth-column">Role</th>
+                            <th className="final-column">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {users && users.length > 0 ? (
                             users.map((user, index) => (
-                                <tr className="border" key={user._id}>
-                                    <td>{index + 1}</td>
-                                    <td>{user.name}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.role}</td>
-                                    <td>
-                                        <Button onClick={() => handleOpenPasswordModal(user)} className="btn-key">
+                                <tr className="border-bottom border-dark" key={user._id}>
+                                    <td className="first-column">{index + 1}.</td>
+                                    <td className="second-column">{user.name}</td>
+                                    <td className="thrid-column">{user.email}</td>
+                                    <td className="forth-column">{user.role}</td>
+                                    <td className="final-column">
+                                        <Button onClick={() => handleOpenPasswordModal(user)} className="action-icon-btn btn-key">
                                             <i className="bi bi-key"></i>
                                         </Button>
-                                        <Button onClick={() => handleOpenEditModal(user)} className="btn-pencil">
+                                        <Button onClick={() => handleOpenEditModal(user)} className="action-icon-btn btn-pencil">
                                             <i className="bi bi-pencil"></i>
                                         </Button>
-                                        <Button onClick={() => handleOpenDeleteModal(user._id)} className="btn-trash">
+                                        <Button onClick={() => handleOpenDeleteModal(user)} className="action-icon-btn btn-trash">
                                             <i className="bi bi-trash"></i>
                                         </Button>
                                     </td>
@@ -200,16 +204,29 @@ const ManageUser = () => {
                     </Modal.Header>
                     <Modal.Body>
                         <form onSubmit={handleAddUser}>
-                            <input type="text" placeholder="Name" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} />
-                            <input type="text" placeholder="Email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
-                            <select value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}>
-                                <option value="" disabled>
-                                    Select Role
-                                </option>
-                                <option value="user">User</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                            <button type="submit">Add User</button>
+                            <div className="modal-form-input">
+                                <label>Name :</label>
+                                <input type="text" placeholder="Name" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} />
+                            </div>
+                            <div className="modal-form-input">
+                                <label>Email :</label>
+                                <input type="text" placeholder="Email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
+                            </div>
+                            <div className="modal-form-input">
+                                <label>Password :</label>
+                                <input type="text" placeholder="Password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
+                            </div>
+                            <div className="modal-form-input">
+                                <label>Role :</label>
+                                <select value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}>
+                                    <option value="" disabled>
+                                        Select Role
+                                    </option>
+                                    <option value="user">User</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <button className="submit-btn" type="submit">Add User</button>
                         </form>
                     </Modal.Body>
                 </Modal>
@@ -219,12 +236,15 @@ const ManageUser = () => {
             <div className="modal-container">
                 <Modal show={showPasswordModal} onHide={handleClosePassword}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Update User</Modal.Title>
+                        <Modal.Title>Change User Password</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <form onSubmit={handleResetPassword}>
-                            <input type="text" placeholder="New Password" value={""} onChange={(e) => setSelectedUser({ ...selectedUser, password: e.target.value })} />
-                            <button type="submit">Update User</button>
+                            <div className="modal-form-input">
+                                <label>New Password :</label>
+                                <input type="text" placeholder="New Password" value={""} onChange={(e) => setNewPassword(e.target.value)} />
+                            </div>
+                            <button className="submit-btn" type="submit">Update Password</button>
                         </form>
                     </Modal.Body>
                 </Modal>
@@ -238,16 +258,25 @@ const ManageUser = () => {
                     </Modal.Header>
                     <Modal.Body>
                         <form onSubmit={handleUpdateUser}>
-                            <input type="text" placeholder="Name" value={selectedUser.name || ""} onChange={(e) => setSelectedUser({ ...selectedUser, name: e.target.value })} />
-                            <input type="text" placeholder="Email" value={selectedUser.email || ""} onChange={(e) => setSelectedUser({ ...selectedUser, email: e.target.value })} />
-                            <select value={selectedUser.role} onChange={(e) => setSelectedUser({ ...selectedUser, role: e.target.value })}>
-                                <option value="" disabled>
-                                    Select Role
-                                </option>
-                                <option value="user">User</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                            <button type="submit">Update User</button>
+                            <div className="modal-form-input">
+                                <label>Name :</label>
+                                <input type="text" placeholder="Name" value={selectedUser.name || ""} onChange={(e) => setSelectedUser({ ...selectedUser, name: e.target.value })} />
+                            </div>
+                            <div className="modal-form-input">
+                                <label>Email :</label>
+                                <input type="text" placeholder="Email" value={selectedUser.email || ""} onChange={(e) => setSelectedUser({ ...selectedUser, email: e.target.value })} />
+                            </div>
+                            <div className="modal-form-input">
+                                <label>Role :</label>
+                                <select value={selectedUser.role} onChange={(e) => setSelectedUser({ ...selectedUser, role: e.target.value })}>
+                                    <option value="" disabled>
+                                        Select Role
+                                    </option>
+                                    <option value="user">User</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <button className="submit-btn" type="submit">Update User</button>
                         </form>
                     </Modal.Body>
                 </Modal>
@@ -257,14 +286,16 @@ const ManageUser = () => {
             <div className="modal-container">
                 <Modal show={showDeleteModal} onHide={handleCloseDelete}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Confirm Delete {user.name}?</Modal.Title>
+                        <Modal.Title>Confirm Delete {selectedUser.name}?</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <form onSubmit={handleDeleteUser}>
-                            <div>
-                                <h3>Are you sure you want to delete {user.name}?</h3>
-                                <p>Once deleted all data related to {user.name} will be gone forever.</p>
-                                <button type="submit">Delete</button>
+                            <div className="delete-form">
+                                <h3>Are you sure you want to delete {selectedUser.name}?</h3>
+                                <p>Once deleted all data related to {selectedUser.name} will be gone forever.</p>
+                                <button className="delete-btn" type="submit">
+                                    Delete
+                                </button>
                             </div>
                         </form>
                     </Modal.Body>

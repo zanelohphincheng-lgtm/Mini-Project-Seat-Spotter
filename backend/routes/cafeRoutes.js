@@ -7,7 +7,7 @@ router.use(express.json())
 
 router.get('/', CafeController.getAllCafes)
 router.get('/:id', CafeController.getCafeById)
-router.post('/new-cafe', CafeController.createCafe)
+router.post('/', CafeController.createCafe)
 router.patch('/:id', auth.authenticate, CafeController.editCafe)
 router.delete('/:id', auth.authenticate, CafeController.deleteCafe)
 

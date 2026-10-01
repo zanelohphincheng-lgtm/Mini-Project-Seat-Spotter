@@ -12,8 +12,8 @@ exports.getCafeById = async (req, res) => {
 
 exports.createCafe = async (req, res) => {
     try {
-        const user = new Cafe(req.body);
-        await user.save();
+        const cafe = new Cafe(req.body);
+        await cafe.save();
         res.status(201).json({ message: "Cafe Added Successfully" });
     } catch (error) {
         res.status(400).json({ error: error.message });
