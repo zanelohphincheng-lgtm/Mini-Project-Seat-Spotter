@@ -34,7 +34,7 @@ const ManageUser = () => {
 
     // Form Inputs for Modals
     const [newPassword, setNewPassword] = useState("");
-    const [newUser, setNewUser] = useState({ name: "", email: "", password:"", role: "" });
+    const [newUser, setNewUser] = useState({ name: "", email: "", password: "", role: "" });
     const [selectedUser, setSelectedUser] = useState({ name: "", email: "", role: "user" });
 
     useEffect(() => {
@@ -69,7 +69,6 @@ const ManageUser = () => {
 
     const handleOpenEditModal = (user) => {
         setSelectedUser(user);
-        setSelectedUser({ name: user.name, email: user.email, role: user.role });
         setShowEditModal(true);
     };
 
@@ -90,7 +89,7 @@ const ManageUser = () => {
         try {
             const res = await api.post(`/users`, newUser);
             const createdUser = res.data.data || res.data;
-            setUsers([...users, createdUser])
+            setUsers([...users, createdUser]);
             alert(`New user has been added!`);
             setShowAddModal(false);
         } catch (err) {
@@ -101,6 +100,10 @@ const ManageUser = () => {
 
     const handleResetPassword = async (e) => {
         e.preventDefault();
+        if (!selectedUser._id) {
+            alert("Error: Cafe ID is missing!");
+            return;
+        }
         try {
             await api.patch(`/users/${selectedUser._id}/reset-password`, { password: newPassword });
             alert(`Password updated successfully for ${selectedUser.name}!`);
@@ -113,6 +116,10 @@ const ManageUser = () => {
 
     const handleUpdateUser = async (e) => {
         e.preventDefault();
+        if (!selectedUser._id) {
+            alert("Error: Cafe ID is missing!");
+            return;
+        }
         try {
             const res = await api.patch(`/users/${selectedUser._id}`, selectedUser);
             setUsers(users.map((u) => (u._id === selectedUser._id ? { ...u, ...selectedUser } : u)));
@@ -126,6 +133,10 @@ const ManageUser = () => {
 
     const handleDeleteUser = async (e) => {
         e.preventDefault();
+        if (!selectedUser._id) {
+            alert("Error: Cafe ID is missing!");
+            return;
+        }
         try {
             await api.delete(`/users/${selectedUser._id}`);
             setUsers(users.filter((u) => u._id !== selectedUser._id));
@@ -168,8 +179,8 @@ const ManageUser = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {users && users.length > 0 ? (
-                            users.map((user, index) => (
+                        {filteredUsers && filteredUsers.length > 0 ? (
+                            filteredUsers.map((user, index) => (
                                 <tr className="border-bottom border-dark" key={user._id}>
                                     <td className="first-column">{index + 1}.</td>
                                     <td className="second-column">{user.name}</td>
@@ -190,7 +201,11 @@ const ManageUser = () => {
                             ))
                         ) : (
                             <tr>
-                                <td>No User Found</td>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <p className="no-result">No User Found</p>
+                                </td>
                             </tr>
                         )}
                     </tbody>
@@ -226,7 +241,9 @@ const ManageUser = () => {
                                     <option value="admin">Admin</option>
                                 </select>
                             </div>
-                            <button className="submit-btn" type="submit">Add User</button>
+                            <button className="submit-btn" type="submit">
+                                Add User
+                            </button>
                         </form>
                     </Modal.Body>
                 </Modal>
@@ -244,7 +261,9 @@ const ManageUser = () => {
                                 <label>New Password :</label>
                                 <input type="text" placeholder="New Password" value={""} onChange={(e) => setNewPassword(e.target.value)} />
                             </div>
-                            <button className="submit-btn" type="submit">Update Password</button>
+                            <button className="submit-btn" type="submit">
+                                Update Password
+                            </button>
                         </form>
                     </Modal.Body>
                 </Modal>
@@ -276,7 +295,9 @@ const ManageUser = () => {
                                     <option value="admin">Admin</option>
                                 </select>
                             </div>
-                            <button className="submit-btn" type="submit">Update User</button>
+                            <button className="submit-btn" type="submit">
+                                Update User
+                            </button>
                         </form>
                     </Modal.Body>
                 </Modal>

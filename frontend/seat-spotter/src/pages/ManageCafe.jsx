@@ -32,8 +32,8 @@ const ManageCafe = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     // Form Inputs for Modals
-    const [newCafe, setNewCafe] = useState({ name: "", address: "", city: "", openingHour: "", isOpen: true, currentCapacity: 0, maxCapacityPerSlot: 20, description: "", imageUrl: "" });
-    const [selectedCafe, setSelectedCafe] = useState({ name: "", address: "", city: "", openingHour: "", isOpen: true, currentCapacity: 0, maxCapacityPerSlot: 20, description: "", imageUrl: "" });
+    const [newCafe, setNewCafe] = useState({ name: "", address: "", city: "", openingHours: "", isOpen: true, currentCapacity: 0, maxCapacityPerSlot: 20, description: "", imageUrl: "" });
+    const [selectedCafe, setSelectedCafe] = useState({ name: "", address: "", city: "", openingHours: "", isOpen: true, currentCapacity: 0, maxCapacityPerSlot: 20, description: "", imageUrl: "" });
 
     useEffect(() => {
         fetchCafes();
@@ -55,13 +55,12 @@ const ManageCafe = () => {
 
     // --- Modal Handlers ---
     const handleOpenAddModal = () => {
-        setNewCafe({ name: "", address: "", city: "", openingHour: "", isOpen: true, currentCapacity: 0, maxCapacityPerSlot: 20, description: "", imageUrl: "" });
+        setNewCafe({ name: "", address: "", city: "", openingHours: "", isOpen: true, currentCapacity: 0, maxCapacityPerSlot: 20, description: "", imageUrl: "" });
         setShowAddModal(true);
     };
 
     const handleOpenEditModal = (cafe) => {
         setSelectedCafe(cafe);
-        setSelectedCafe({ name: cafe.name, address: cafe.address, city: cafe.city, openingHour: cafe.openingHour, isOpen: cafe.isOpen, currentCapacity: cafe.currentCapacity, maxCapacityPerSlot: cafe.maxCapacityPerSlot, description: cafe.description, imageUrl: cafe.imageUrl });
         setShowEditModal(true);
     };
 
@@ -79,9 +78,8 @@ const ManageCafe = () => {
     const handleAddCafe = async (e) => {
         e.preventDefault();
         try {
-            const res = await api.post(`/cafes`, newCafe);
-            const createdCafe = res.data.data || res.data;
-            setCafes([...cafes, createdCafe])
+            await api.post(`/cafes`, newCafe);
+            await fetchCafes();
             alert(`New cafe has been added!`);
             setShowAddModal(false);
         } catch (err) {
@@ -92,6 +90,10 @@ const ManageCafe = () => {
 
     const handleUpdateCafe = async (e) => {
         e.preventDefault();
+        if (!selectedCafe._id) {
+            alert("Error: Cafe ID is missing!");
+            return;
+        }
         try {
             const res = await api.put(`/cafes/${selectedCafe._id}`, selectedCafe);
             setCafes(cafes.map((c) => (c._id === selectedCafe._id ? { ...c, ...selectedCafe } : c)));
@@ -105,6 +107,10 @@ const ManageCafe = () => {
 
     const handleDeleteCafe = async (e) => {
         e.preventDefault();
+        if (!selectedCafe._id) {
+            alert("Error: Cafe ID is missing!");
+            return;
+        }
         try {
             await api.delete(`/cafes/${selectedCafe._id}`);
             setCafes(cafes.filter((c) => c._id !== selectedCafe._id));
@@ -139,32 +145,36 @@ const ManageCafe = () => {
                 <table className="manage-table-v2">
                     <thead>
                         <tr>
-                            <th>No.</th>
-                            <th>Cafe Name</th>
-                            <th>Address</th>
-                            <th>City</th>
-                            <th>Opening Hours</th>
-                            <th>Is Open</th>
-                            <th>Current Capacity</th>
-                            <th>Max Capacity</th>
-                            <th>Description</th>
-                            <th>Action</th>
+                            <th className="column-1">No.</th>
+                            <th className="column-2">Cafe Name</th>
+                            <th className="column-3">Address</th>
+                            <th className="column-4">City</th>
+                            <th className="column-5">Opening Hours</th>
+                            <th className="column-6">Status</th>
+                            <th className="column-7">Current Capacity</th>
+                            <th className="column-8">Max Capacity</th>
+                            <th className="column-9">Description</th>
+                            <th className="column-10">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {cafes && cafes.length > 0 ? (
-                            cafes.map((cafe, index) => (
+                        {filteredCafes && filteredCafes.length > 0 ? (
+                            filteredCafes.map((cafe, index) => (
                                 <tr className="border-bottom border-dark" key={cafe._id}>
-                                    <td>{index + 1}</td>
-                                    <td>{cafe.name}</td>
-                                    <td>{cafe.address}</td>
-                                    <td>{cafe.city}</td>
-                                    <td>{cafe.openingHours}</td>
-                                    <td>{cafe.isOpen || "Open" || "Close"}</td>
-                                    <td>{cafe.currentCapacity}</td>
-                                    <td>{cafe.maxCapacityPerSlot}</td>
-                                    <td>{cafe.description}</td>
-                                    <td>
+                                    <td className="column-1">{index + 1}.</td>
+                                    <td className="column-2">{cafe.name}</td>
+                                    <td className="column-3">{cafe.address}</td>
+                                    <td className="column-4">{cafe.city}</td>
+                                    <td className="column-5">{cafe.openingHours}</td>
+                                    <td className="column-6">
+                                        <div className={cafe.isOpen ? "status-open" : "status-close"}>
+                                            {cafe.isOpen ? "Open" : "Close"}
+                                        </div>
+                                    </td>
+                                    <td className="column-7">{cafe.currentCapacity}</td>
+                                    <td className="column-8">{cafe.maxCapacityPerSlot}</td>
+                                    <td className="column-9">{cafe.description}</td>
+                                    <td className="column-10">
                                         <Button onClick={() => handleOpenEditModal(cafe)} className="action-icon-btn btn-pencil">
                                             <i className="bi bi-pencil"></i>
                                         </Button>
@@ -176,7 +186,14 @@ const ManageCafe = () => {
                             ))
                         ) : (
                             <tr>
-                                <td>No Cafe Found</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <p className="no-result">No Cafe Found</p>
+                                </td>
                             </tr>
                         )}
                     </tbody>
@@ -232,7 +249,9 @@ const ManageCafe = () => {
                                 <label>Image URL :</label>
                                 <input type="url" placeholder="Image URL" value={newCafe.imageUrl} onChange={(e) => setNewCafe({ ...newCafe, imageUrl: e.target.value })} />
                             </div>
-                            <button className="submit-btn" type="submit">Add Cafe</button>
+                            <button className="submit-btn" type="submit">
+                                Add Cafe
+                            </button>
                         </form>
                     </Modal.Body>
                 </Modal>
@@ -288,7 +307,9 @@ const ManageCafe = () => {
                                 <label>Image URL</label>
                                 <input type="url" placeholder="Image URL" value={selectedCafe.imageUrl || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, imageUrl: e.target.value })} />
                             </div>
-                            <button className="submit-btn" type="submit">Update Cafe</button>
+                            <button className="submit-btn" type="submit">
+                                Update Cafe
+                            </button>
                         </form>
                     </Modal.Body>
                 </Modal>
