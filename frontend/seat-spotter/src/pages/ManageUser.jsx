@@ -87,9 +87,8 @@ const ManageUser = () => {
     const handleAddUser = async (e) => {
         e.preventDefault();
         try {
-            const res = await api.post(`/users`, newUser);
-            const createdUser = res.data.data || res.data;
-            setUsers([...users, createdUser]);
+            await api.post(`/users`, newUser);
+            await fetchUsers();
             alert(`New user has been added!`);
             setShowAddModal(false);
         } catch (err) {
@@ -106,6 +105,8 @@ const ManageUser = () => {
         }
         try {
             await api.patch(`/users/${selectedUser._id}/reset-password`, { password: newPassword });
+            await fetchUsers();
+            setNewPassword("");
             alert(`Password updated successfully for ${selectedUser.name}!`);
             setShowPasswordModal(false);
         } catch (err) {
@@ -121,8 +122,8 @@ const ManageUser = () => {
             return;
         }
         try {
-            const res = await api.patch(`/users/${selectedUser._id}`, selectedUser);
-            setUsers(users.map((u) => (u._id === selectedUser._id ? { ...u, ...selectedUser } : u)));
+            await api.patch(`/users/${selectedUser._id}`, selectedUser);
+            await fetchUsers();
             alert("User updated successfully!");
             setShowEditModal(false);
         } catch (err) {
@@ -139,7 +140,8 @@ const ManageUser = () => {
         }
         try {
             await api.delete(`/users/${selectedUser._id}`);
-            setUsers(users.filter((u) => u._id !== selectedUser._id));
+            const updatedList = users.filter((u) => u._id !== selectedUser._id)
+            setUsers(updatedList);
             alert("User deleted successfully!");
             setShowDeleteModal(false);
         } catch (err) {
@@ -164,7 +166,7 @@ const ManageUser = () => {
             <h3 className="manage-title">Manage User</h3>
             <div className="search-bar-container">
                 <i className="bi bi-search search-icon"></i>
-                <input className="search-input" type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="name, name@example.com" />
+                <input required className="search-input" type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="name, name@example.com" />
             </div>
 
             <div className="manage-table-card">
@@ -221,19 +223,19 @@ const ManageUser = () => {
                         <form onSubmit={handleAddUser}>
                             <div className="modal-form-input">
                                 <label>Name :</label>
-                                <input type="text" placeholder="Name" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} />
+                                <input required type="text" placeholder="Name" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>Email :</label>
-                                <input type="text" placeholder="Email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
+                                <input required type="text" placeholder="Email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>Password :</label>
-                                <input type="text" placeholder="Password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
+                                <input required type="text" placeholder="Password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>Role :</label>
-                                <select value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}>
+                                <select required value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}>
                                     <option value="" disabled>
                                         Select Role
                                     </option>
@@ -259,7 +261,7 @@ const ManageUser = () => {
                         <form onSubmit={handleResetPassword}>
                             <div className="modal-form-input">
                                 <label>New Password :</label>
-                                <input type="text" placeholder="New Password" value={""} onChange={(e) => setNewPassword(e.target.value)} />
+                                <input required type="text" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
                             </div>
                             <button className="submit-btn" type="submit">
                                 Update Password
@@ -279,15 +281,15 @@ const ManageUser = () => {
                         <form onSubmit={handleUpdateUser}>
                             <div className="modal-form-input">
                                 <label>Name :</label>
-                                <input type="text" placeholder="Name" value={selectedUser.name || ""} onChange={(e) => setSelectedUser({ ...selectedUser, name: e.target.value })} />
+                                <input required type="text" placeholder="Name" value={selectedUser.name || ""} onChange={(e) => setSelectedUser({ ...selectedUser, name: e.target.value })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>Email :</label>
-                                <input type="text" placeholder="Email" value={selectedUser.email || ""} onChange={(e) => setSelectedUser({ ...selectedUser, email: e.target.value })} />
+                                <input required type="text" placeholder="Email" value={selectedUser.email || ""} onChange={(e) => setSelectedUser({ ...selectedUser, email: e.target.value })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>Role :</label>
-                                <select value={selectedUser.role} onChange={(e) => setSelectedUser({ ...selectedUser, role: e.target.value })}>
+                                <select required value={selectedUser.role} onChange={(e) => setSelectedUser({ ...selectedUser, role: e.target.value })}>
                                     <option value="" disabled>
                                         Select Role
                                     </option>

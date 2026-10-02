@@ -95,8 +95,8 @@ const ManageCafe = () => {
             return;
         }
         try {
-            const res = await api.put(`/cafes/${selectedCafe._id}`, selectedCafe);
-            setCafes(cafes.map((c) => (c._id === selectedCafe._id ? { ...c, ...selectedCafe } : c)));
+            await api.put(`/cafes/${selectedCafe._id}`, selectedCafe);
+            await fetchCafes();
             alert("Cafe updated successfully!");
             setShowEditModal(false);
         } catch (err) {
@@ -113,7 +113,8 @@ const ManageCafe = () => {
         }
         try {
             await api.delete(`/cafes/${selectedCafe._id}`);
-            setCafes(cafes.filter((c) => c._id !== selectedCafe._id));
+            const updatedList = cafes.filter((c) => c._id !== selectedCafe._id)
+            setCafes(updatedList);
             alert("Cafe deleted successfully!");
             setShowDeleteModal(false);
         } catch (err) {
@@ -138,7 +139,7 @@ const ManageCafe = () => {
             <h3 className="manage-title">Manage Cafe</h3>
             <div className="search-bar-container">
                 <i className="bi bi-search search-icon"></i>
-                <input className="search-input" type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cafe Meow Meow :)" />
+                <input required className="search-input" type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cafe Meow Meow :)" />
             </div>
 
             <div className="manage-table-card">
@@ -209,23 +210,23 @@ const ManageCafe = () => {
                         <form onSubmit={handleAddCafe}>
                             <div className="modal-form-input">
                                 <label>Name :</label>
-                                <input type="text" placeholder="Name" value={newCafe.name} onChange={(e) => setNewCafe({ ...newCafe, name: e.target.value })} />
+                                <input required type="text" placeholder="Name" value={newCafe.name} onChange={(e) => setNewCafe({ ...newCafe, name: e.target.value })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>Address :</label>
-                                <input type="text" placeholder="Address" value={newCafe.address} onChange={(e) => setNewCafe({ ...newCafe, address: e.target.value })} />
+                                <input required type="text" placeholder="Address" value={newCafe.address} onChange={(e) => setNewCafe({ ...newCafe, address: e.target.value })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>City :</label>
-                                <input type="text" placeholder="City" value={newCafe.city} onChange={(e) => setNewCafe({ ...newCafe, city: e.target.value })} />
+                                <input required type="text" placeholder="City" value={newCafe.city} onChange={(e) => setNewCafe({ ...newCafe, city: e.target.value })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>Opening Hour :</label>
-                                <input type="text" placeholder="00:00 - 00:00" value={newCafe.openingHours} onChange={(e) => setNewCafe({ ...newCafe, openingHours: e.target.value })} />
+                                <input required type="text" placeholder="00:00 - 00:00" value={newCafe.openingHours} onChange={(e) => setNewCafe({ ...newCafe, openingHours: e.target.value })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>Status :</label>
-                                <select value={newCafe.isOpen} onChange={(e) => setNewCafe({ ...newCafe, isOpen: e.target.value })}>
+                                <select required value={newCafe.isOpen} onChange={(e) => setNewCafe({ ...newCafe, isOpen: e.target.value === "true" })}>
                                     <option value="" disabled>
                                         Select Status
                                     </option>
@@ -235,15 +236,15 @@ const ManageCafe = () => {
                             </div>
                             <div className="modal-form-input">
                                 <label>Current Capacity :</label>
-                                <input type="text" placeholder="Current Capacity" value={newCafe.currentCapacity} onChange={(e) => setNewCafe({ ...newCafe, currentCapacity: e.target.value })} />
+                                <input required min={0} type="text" placeholder="Current Capacity" value={newCafe.currentCapacity} onChange={(e) => setNewCafe({ ...newCafe, currentCapacity: Number(e.target.value) })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>Max Capacity :</label>
-                                <input type="text" placeholder="Max Capacity" value={newCafe.maxCapacityPerSlot} onChange={(e) => setNewCafe({ ...newCafe, maxCapacityPerSlot: e.target.value })} />
+                                <input required min={5} type="text" placeholder="Max Capacity" value={newCafe.maxCapacityPerSlot} onChange={(e) => setNewCafe({ ...newCafe, maxCapacityPerSlot: Number(e.target.value) })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>Description :</label>
-                                <input type="text" placeholder="Description" value={newCafe.description} onChange={(e) => setNewCafe({ ...newCafe, description: e.target.value })} />
+                                <input required type="text" placeholder="Description" value={newCafe.description} onChange={(e) => setNewCafe({ ...newCafe, description: e.target.value })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>Image URL :</label>
@@ -267,23 +268,23 @@ const ManageCafe = () => {
                         <form onSubmit={handleUpdateCafe}>
                             <div className="modal-form-input">
                                 <label>Name</label>
-                                <input type="text" placeholder="Name" value={selectedCafe.name || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, name: e.target.value })} />
+                                <input required type="text" placeholder="Name" value={selectedCafe.name || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, name: e.target.value })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>Address</label>
-                                <input type="text" placeholder="Address" value={selectedCafe.address || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, address: e.target.value })} />
+                                <input required type="text" placeholder="Address" value={selectedCafe.address || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, address: e.target.value })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>City</label>
-                                <input type="text" placeholder="City" value={selectedCafe.city || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, city: e.target.value })} />
+                                <input required type="text" placeholder="City" value={selectedCafe.city || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, city: e.target.value })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>Opening Hours</label>
-                                <input type="text" placeholder="00:00 - 00:00" value={selectedCafe.openingHours || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, openingHours: e.target.value })} />
+                                <input required type="text" placeholder="00:00 - 00:00" value={selectedCafe.openingHours || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, openingHours: e.target.value })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>Status</label>
-                                <select value={selectedCafe.isOpen || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, isOpen: e.target.value })}>
+                                <select required value={selectedCafe.isOpen} onChange={(e) => setSelectedCafe({ ...selectedCafe, isOpen: e.target.value === "true" })}>
                                     <option value="" disabled>
                                         Select Status
                                     </option>
@@ -293,15 +294,15 @@ const ManageCafe = () => {
                             </div>
                             <div className="modal-form-input">
                                 <label>Current Capacity</label>
-                                <input type="number" placeholder="Current Capacity" value={selectedCafe.currentCapacity || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, currentCapacity: e.target.value })} />
+                                <input required min={0} type="number" placeholder="Current Capacity" value={selectedCafe.currentCapacity || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, currentCapacity: Number(e.target.value) })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>Max Capacity</label>
-                                <input type="number" placeholder="Max Capacity" value={selectedCafe.maxCapacityPerSlot || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, maxCapacityPerSlot: e.target.value })} />
+                                <input required min={5} type="number" placeholder="Max Capacity" value={selectedCafe.maxCapacityPerSlot || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, maxCapacityPerSlot: Number(e.target.value) })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>Description</label>
-                                <input type="text" placeholder="Description" value={selectedCafe.description || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, description: e.target.value })} />
+                                <input required type="text" placeholder="Description" value={selectedCafe.description || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, description: e.target.value })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>Image URL</label>
