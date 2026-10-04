@@ -168,6 +168,12 @@
     margin-right: 5px;
 }
 
+.btn-view {
+    background-color: #a04e4e;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
 .btn-pencil {
     background-color: #f59e0b; /* Yellow/Orange */
     border-radius: 5px;
@@ -181,6 +187,11 @@
 
 .btn-key:hover {
     background-color: #0ea573; /* Green */
+    margin-right: 5px;
+}
+
+.btn-view:hover {
+    background-color: #8a4343; /* Green */
     margin-right: 5px;
 }
 

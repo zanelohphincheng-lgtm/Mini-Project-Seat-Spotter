@@ -171,9 +171,12 @@ const ManageReservation = () => {
                     <thead>
                         <tr>
                             <th className="first-column">No.</th>
-                            <th className="second-column">Reservationname</th>
-                            <th className="thrid-column">Email</th>
-                            <th className="forth-column">Role</th>
+                            <th className="second-column">Cafe</th>
+                            <th className="thrid-column">User</th>
+                            <th className="forth-column">Booking Date</th>
+                            <th className="fifth-column">Time Slot</th>
+                            <th className="sixth-column">Party Size</th>
+                            <th className="seventh-column">Status</th>
                             <th className="final-column">Action</th>
                         </tr>
                     </thead>
@@ -182,12 +185,15 @@ const ManageReservation = () => {
                             filteredReservations.map((reservation, index) => (
                                 <tr className="border-bottom border-dark" key={reservation._id}>
                                     <td className="first-column">{index + 1}.</td>
-                                    <td className="second-column">{reservation.name}</td>
-                                    <td className="thrid-column">{reservation.email}</td>
-                                    <td className="forth-column">{reservation.role}</td>
+                                    <td className="second-column">{reservation.cafe}</td>
+                                    <td className="thrid-column">{reservation.user}</td>
+                                    <td className="forth-column">{reservation.bookingDate}</td>
+                                    <td className="fifth-column">{reservation.timeSlot}</td>
+                                    <td className="sixth-column">{reservation.partySize}</td>
+                                    <td className="seventh-column status-pill">{reservation.status}</td>
                                     <td className="final-column">
-                                        <Button onClick={() => handleOpenPasswordModal(reservation)} className="action-icon-btn btn-key">
-                                            <i className="bi bi-key"></i>
+                                        <Button onClick={() => handleOpenPasswordModal(reservation)} className="action-icon-btn btn-view">
+                                            <i className="bi bi-eye"></i>
                                         </Button>
                                         <Button onClick={() => handleOpenEditModal(reservation)} className="action-icon-btn btn-pencil">
                                             <i className="bi bi-pencil"></i>

@@ -171,9 +171,11 @@ const ManageReview = () => {
                     <thead>
                         <tr>
                             <th className="first-column">No.</th>
-                            <th className="second-column">Reviewname</th>
-                            <th className="thrid-column">Email</th>
-                            <th className="forth-column">Role</th>
+                            <th className="second-column">Cafe</th>
+                            <th className="thrid-column">User</th>
+                            <th className="forth-column">Rating</th>
+                            <th className="fifth-column">Comment</th>
+                            <th className="sixth-column">Crowd Report</th>
                             <th className="final-column">Action</th>
                         </tr>
                     </thead>
@@ -182,12 +184,14 @@ const ManageReview = () => {
                             filteredReviews.map((review, index) => (
                                 <tr className="border-bottom border-dark" key={review._id}>
                                     <td className="first-column">{index + 1}.</td>
-                                    <td className="second-column">{review.name}</td>
-                                    <td className="thrid-column">{review.email}</td>
-                                    <td className="forth-column">{review.role}</td>
+                                    <td className="second-column">{review.cafe}</td>
+                                    <td className="thrid-column">{review.user}</td>
+                                    <td className="forth-column">{review.rating}</td>
+                                    <td className="fifth-column">{review.comment}</td>
+                                    <td className="sixth-column">{review.crowdReport}</td>
                                     <td className="final-column">
-                                        <Button onClick={() => handleOpenPasswordModal(review)} className="action-icon-btn btn-key">
-                                            <i className="bi bi-key"></i>
+                                        <Button onClick={() => handleOpenPasswordModal(review)} className="action-icon-btn btn-view">
+                                            <i className="bi bi-eye"></i>
                                         </Button>
                                         <Button onClick={() => handleOpenEditModal(review)} className="action-icon-btn btn-pencil">
                                             <i className="bi bi-pencil"></i>
