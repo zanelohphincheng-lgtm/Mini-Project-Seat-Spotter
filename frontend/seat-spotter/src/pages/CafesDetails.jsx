@@ -9,7 +9,7 @@ const CafeDetail = () => {
     const navigate = useNavigate();
 
     const [cafe, setCafe] = useState(null);
-    const [loading, setLoading] = useState(true);
+
     const [activeTab, setActiveTab] = useState("reviews");
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [seatsLeft, setSeatsLeft] = useState(8);
@@ -21,11 +21,9 @@ const CafeDetail = () => {
     const fetchCafeDetail = async () => {
         try {
             const res = await api.get(`/cafes/${cafe.id}`);
-            setCafe(res.data.data || res.data);
+            setCafe(res.data);
         } catch (err) {
             console.error("Error fetching cafe:", err);
-        } finally {
-            setLoading(false);
         }
     };
 

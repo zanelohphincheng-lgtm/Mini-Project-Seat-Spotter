@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router"
+import { useNavigate, useParams } from "react-router";
 import api from "../utils/api";
 import Navbar from "../components/navbar";
 import "../styles/cafes.css";
@@ -7,7 +7,6 @@ import "../styles/cafes.css";
 const Cafes = () => {
     const [cafes, setCafes] = useState([]);
     const { id } = useParams();
-    const [loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
 
@@ -18,18 +17,16 @@ const Cafes = () => {
     const fetchCafes = async () => {
         try {
             const res = await api.get("http://localhost:5000/cafes");
-            setCafes(res.data.data || res.data);
+            setCafes(res.data);
         } catch (err) {
             console.error("Error fetching cafes:", err);
-        } finally {
-            setLoading(false);
         }
     };
 
     const cafeDetail = (e) => {
-      e.preventDefault()
-      navigate(`/cafes/${cafes.id}`)
-    }
+        e.preventDefault();
+        navigate(`/cafes/${cafes.id}`);
+    };
 
     const initialCafes = [
         {
@@ -101,20 +98,14 @@ const Cafes = () => {
                                         {/* Location */}
                                         <div className="cafe-detail-item">
                                             <i className="bi bi-geo-alt-fill detail-icon"></i>
-                                            <span>{cafe.city}, {cafe.address || "Armanian Street Batu Lanchang Pulau Pinang"}</span>
+                                            <span>
+                                                {cafe.city}, {cafe.address || "Armanian Street Batu Lanchang Pulau Pinang"}
+                                            </span>
                                         </div>
                                     </div>
 
                                     {/* Status Badge: OPEN vs CLOSE */}
-                                    {cafe.isOpen ? (
-                                        <div className="status-banner bg-open">
-                                            OPEN
-                                        </div>
-                                    ) : (
-                                        <div className="status-banner bg-closed">
-                                            CLOSE
-                                        </div>
-                                    )}
+                                    {cafe.isOpen ? <div className="status-banner bg-open">OPEN</div> : <div className="status-banner bg-closed">CLOSE</div>}
                                 </div>
                             </div>
                         ))}

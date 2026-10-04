@@ -10,6 +10,8 @@ import CafeDetail from "./pages/CafesDetails";
 import Dashboard from "./pages/Dashboard";
 import ManageUser from "./pages/ManageUser";
 import ManageCafe from "./pages/ManageCafe";
+import ManageReservation from "./pages/ManageReservation";
+import ManageReview from "./pages/ManageReview";
 
 function App() {
     return (
@@ -23,6 +25,8 @@ function App() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/manage-user" element={<ManageUser />} />
                 <Route path="/manage-cafe" element={<ManageCafe />} />
+                <Route path="/manage-reservation" element={<ManageReservation />} />
+                <Route path="/manage-review" element={<ManageReview />} />
             </Routes>
         </BrowserRouter>
     );

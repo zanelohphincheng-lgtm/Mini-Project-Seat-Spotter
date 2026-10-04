@@ -23,14 +23,14 @@ const Login = () => {
         e.preventDefault();
 
         // 💡 Add your login / authentication logic here
-        console.log("Form submitted:", {email, password });
+        console.log("Form submitted:", { email, password });
         try {
             const response = await api.post("/users/login", {
                 email,
                 password,
             });
             localStorage.setItem("token", response.data.token);
-            localStorage.setItem("user", JSON.stringify(response.data.user))
+            localStorage.setItem("user", JSON.stringify(response.data.user));
             navigate("/dashboard");
             console.log(response.data);
             alert("Login Successful!");
@@ -38,8 +38,6 @@ const Login = () => {
         } catch (error) {
             console.error("Login Error:", error);
             alert("Login failed. Please check your connection or user info.");
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -63,7 +61,6 @@ const Login = () => {
                 {error && <div className="user-login-page-label">{error}</div>}
                 {/* Registration Form */}
                 <form onSubmit={handleSubmit} className="input-container">
-
                     {/* Email Field */}
                     <div>
                         <label className="input-label">Email :</label>

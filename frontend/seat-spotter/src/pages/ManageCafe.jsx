@@ -24,7 +24,6 @@ const ManageCafe = () => {
     }
     const [cafes, setCafes] = useState([]);
     const [search, setSearch] = useState("");
-    const [loading, setLoading] = useState(true);
 
     // Modal Visibility States
     const [showAddModal, setShowAddModal] = useState(false);
@@ -42,11 +41,9 @@ const ManageCafe = () => {
     const fetchCafes = async () => {
         try {
             const res = await api.get("/cafes");
-            setCafes(res.data.data || res.data);
+            setCafes(res.data);
         } catch (err) {
             console.error("Failed to fetch cafes:", err);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -113,7 +110,7 @@ const ManageCafe = () => {
         }
         try {
             await api.delete(`/cafes/${selectedCafe._id}`);
-            const updatedList = cafes.filter((c) => c._id !== selectedCafe._id)
+            const updatedList = cafes.filter((c) => c._id !== selectedCafe._id);
             setCafes(updatedList);
             alert("Cafe deleted successfully!");
             setShowDeleteModal(false);
@@ -168,9 +165,7 @@ const ManageCafe = () => {
                                     <td className="column-4">{cafe.city}</td>
                                     <td className="column-5">{cafe.openingHours}</td>
                                     <td className="column-6">
-                                        <div className={cafe.isOpen ? "status-open" : "status-close"}>
-                                            {cafe.isOpen ? "Open" : "Close"}
-                                        </div>
+                                        <div className={cafe.isOpen ? "status-open" : "status-close"}>{cafe.isOpen ? "Open" : "Close"}</div>
                                     </td>
                                     <td className="column-7">{cafe.currentCapacity}</td>
                                     <td className="column-8">{cafe.maxCapacityPerSlot}</td>

@@ -27,8 +27,6 @@ const Register = () => {
         } catch (error) {
             console.log("Sign Up Error : ", error);
             setError(error.response?.data?.message || "Sign up failed. Please check your connection.");
-        } finally {
-            setLoading(false);
         }
     };
 

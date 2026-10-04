@@ -24,7 +24,6 @@ const ManageUser = () => {
     }
     const [users, setUsers] = useState([]);
     const [search, setSearch] = useState("");
-    const [loading, setLoading] = useState(true);
 
     // Modal Visibility States
     const [showAddModal, setShowAddModal] = useState(false);
@@ -44,11 +43,9 @@ const ManageUser = () => {
     const fetchUsers = async () => {
         try {
             const res = await api.get("/users");
-            setUsers(res.data.data || res.data);
+            setUsers(res.data);
         } catch (err) {
             console.error("Failed to fetch users:", err);
-        } finally {
-            setLoading(false);
         }
     };
 
