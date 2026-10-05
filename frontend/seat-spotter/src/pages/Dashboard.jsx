@@ -35,13 +35,13 @@ const Dashboard = () => {
                     <div className="dashboard-container">
                         <div className="dashboard-grid">
                             <div className="dashboard-card">
-                                <i className="bi bi-people card-icon-circle"></i>
+                                <i className="bi bi-people-fill card-icon-circle"></i>
                                 <Link to="/manage-user" className="dashboard-btn">
                                     Manage User
                                 </Link>
                             </div>
                             <div className="dashboard-card">
-                                <i className="bi bi-cup card-icon-circle"></i>
+                                <i className="bi bi-cup-straw card-icon-circle"></i>
                                 <Link to="/manage-cafe" className="dashboard-btn">
                                     Manage Cafe
                                 </Link>
@@ -75,13 +75,13 @@ const Dashboard = () => {
                 <div className="dashboard-container">
                     <div className="dashboard-grid">
                         <div className="dashboard-card">
-                            <i className="bi bi-journal card-icon-circle"></i>
+                            <i className="bi bi-journal-bookmark-fill card-icon-circle"></i>
                             <Link to="/user-bookmark" className="dashboard-btn">
                                 View Bookmark
                             </Link>
                         </div>
                         <div className="dashboard-card">
-                            <i className="card-icon-pill">RESERVATION</i>
+                            <i className="bi bi-calendar-check card-icon-circle"></i>
                             <Link to="/user-reservation" className="dashboard-btn">
                                 View Reservation
                             </Link>

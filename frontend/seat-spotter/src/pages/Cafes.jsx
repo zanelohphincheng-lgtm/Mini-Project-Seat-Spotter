@@ -1,14 +1,78 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
+import { Modal, Button, Form } from "react-bootstrap";
 import api from "../utils/api";
 import Navbar from "../components/navbar";
 import "../styles/cafes.css";
 
 const Cafes = () => {
     const [cafes, setCafes] = useState([]);
-    const { id } = useParams();
+    const [selectedCafe, setSelectedCafe] = useState(null);
+    const [showCafeDetailModal, setShowCafeDetailModal] = useState();
 
-    const navigate = useNavigate();
+    // Form states
+    const [newReservation, setNewReservation] = useState({ date: "", time: "", guests: 1 });
+    const [newReview, setNewReview] = useState({ rating: 5, comment: "" });
+    const [isBookmarked, setIsBookmarked] = useState(false);
+
+    const handleOpenCafeDetailModal = (cafe) => {
+        setSelectedCafe(cafe);
+        setNewReservation({ date: "", time: "", guests: 1 });
+        setNewReview({ rating: 5, comment: "" });
+        setIsBookmarked(false);
+        setShowCafeDetailModal(true);
+    };
+
+    const handleCloseCafeDetail = () => {
+        setShowCafeDetailModal(false);
+        setSelectedCafe(null);
+    };
+
+    // Toggle Bookmark
+    const handleToggleBookmark = async () => {
+        try {
+            setIsBookmarked(!isBookmarked);
+            await api.post(`/cafes/${selectedCafe._id}/bookmark`);
+        } catch (err) {
+            console.error("Failed to update bookmark:", err);
+        }
+    };
+
+    // Submit Reservation
+    const handleReservationSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await api.post("/reservations", {
+                cafeId: selectedCafe._id,
+                bookingDate: newReservation.date,
+                timeSlot: newReservation.time,
+                partySize: Number(newReservation.guests),
+            });
+            alert("Reservation submitted successfully!");
+            setNewReservation({ date: "", time: "", guests: 1 });
+        } catch (err) {
+            console.error("Failed to create reservation:", err);
+            alert("Failed to create reservation.");
+        }
+    };
+
+    // Submit Review
+    const handleReviewSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await api.post("/reviews", {
+                cafeId: selectedCafe._id,
+                rating: newReview.rating,
+                crowdReport: newReview.crowdReport,
+                comment: newReview.comment,
+            });
+            alert("Review submitted successfully!");
+            setNewReview({ rating: 5, crowdReport: "moderate", comment: "" });
+        } catch (err) {
+            console.error("Failed to submit review:", err);
+            alert("Failed to submit review.");
+        }
+    };
 
     useEffect(() => {
         fetchCafes();
@@ -16,56 +80,12 @@ const Cafes = () => {
 
     const fetchCafes = async () => {
         try {
-            const res = await api.get("http://localhost:5000/cafes");
+            const res = await api.get("/cafes");
             setCafes(res.data);
         } catch (err) {
             console.error("Error fetching cafes:", err);
         }
     };
-
-    const cafeDetail = (e) => {
-        e.preventDefault();
-        navigate(`/cafes/${cafes.id}`);
-    };
-
-    const initialCafes = [
-        {
-            id: 1,
-            name: "Cafe 1",
-            hours: "00:00 - 00:00",
-            location: "Location",
-            isOpen: true,
-            image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=600&q=80",
-            bookmarked: false,
-        },
-        {
-            id: 2,
-            name: "Cafe 2",
-            hours: "00:00 - 00:00",
-            location: "Location",
-            isOpen: false,
-            image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=600&q=80",
-            bookmarked: false,
-        },
-        {
-            id: 3,
-            name: "Cafe 3",
-            hours: "00:00 - 00:00",
-            location: "Location",
-            isOpen: true,
-            image: "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?auto=format&fit=crop&w=600&q=80",
-            bookmarked: false,
-        },
-        {
-            id: 4,
-            name: "Cafe 4",
-            hours: "00:00 - 00:00",
-            location: "Location",
-            isOpen: true,
-            image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80",
-            bookmarked: false,
-        },
-    ];
 
     return (
         <div className="cafes-body">
@@ -73,45 +93,133 @@ const Cafes = () => {
 
             {/* Main Cafe Grid */}
             <main className="card-container">
-                {loading ? (
-                    <div className="loading-text">Loading cafes...</div>
-                ) : (
-                    <div className="card-grid">
-                        {cafes.map((cafe) => (
-                            <div onClick={cafeDetail} key={cafe.id} className="cafe-card">
-                                {/* Cafe Image */}
-                                <div className="cafe-image-container">
-                                    <img src={cafe.imageUrl || "https://images.unsplash.com/photo-1554118811-1e0d58224f24"} alt={cafe.name} className="cafe-image" />
-                                </div>
+                <div className="card-grid">
+                    {cafes.map((cafe) => (
+                        <div onClick={() => handleOpenCafeDetailModal(cafe)} key={cafe._id} className="cafe-card" style={{ cursor: "pointer" }}>
+                            {/* Cafe Image */}
+                            <div className="cafe-image-container">
+                                <img src={cafe.imageUrl || "https://images.unsplash.com/photo-1554118811-1e0d58224f24"} alt={cafe.name} className="cafe-image" />
+                            </div>
 
-                                {/* Cafe Details */}
-                                <div className="card-detail-container">
-                                    <div className="card-detail">
-                                        <h2 className="cafe-title">{cafe.name}</h2>
+                            {/* Cafe Details */}
+                            <div className="card-detail-container">
+                                <div className="card-detail">
+                                    <h2 className="cafe-title">{cafe.name}</h2>
 
-                                        {/* Opening Hours */}
-                                        <div className="cafe-detail-item">
-                                            <i className="bi bi-clock detail-icon"></i>
-                                            <span>{cafe.openingHours || "08:00 - 22:00"}</span>
-                                        </div>
-
-                                        {/* Location */}
-                                        <div className="cafe-detail-item">
-                                            <i className="bi bi-geo-alt-fill detail-icon"></i>
-                                            <span>
-                                                {cafe.city}, {cafe.address || "Armanian Street Batu Lanchang Pulau Pinang"}
-                                            </span>
-                                        </div>
+                                    {/* Opening Hours */}
+                                    <div className="cafe-detail-item">
+                                        <i className="bi bi-clock detail-icon"></i>
+                                        <span>{cafe.openingHours || "08:00 - 22:00"}</span>
                                     </div>
 
-                                    {/* Status Badge: OPEN vs CLOSE */}
-                                    {cafe.isOpen ? <div className="status-banner bg-open">OPEN</div> : <div className="status-banner bg-closed">CLOSE</div>}
+                                    {/* Location */}
+                                    <div className="cafe-detail-item">
+                                        <i className="bi bi-geo-alt-fill detail-icon"></i>
+                                        <span>
+                                            {cafe.city}, {cafe.address || "Armanian Street Batu Lanchang Pulau Pinang"}
+                                        </span>
+                                    </div>
                                 </div>
+
+                                {/* Status Badge: OPEN vs CLOSE */}
+                                {cafe.isOpen ? <div className="status-banner bg-open">OPEN</div> : <div className="status-banner bg-closed">CLOSE</div>}
                             </div>
-                        ))}
-                    </div>
-                )}
+                        </div>
+                    ))}
+                </div>
             </main>
+            {/* Cafe Detail Modal */}
+            {selectedCafe && (
+                <Modal show={showCafeDetailModal} onHide={handleCloseCafeDetail} size="lg" centered>
+                    <Modal.Header closeButton>
+                        <div className="d-flex align-items-center justify-content-between w-100 pe-3">
+                            <Modal.Title>{selectedCafe.name}</Modal.Title>
+
+                            {/* Bookmark Icon */}
+                            <i className={`bi ${isBookmarked ? "bi-bookmark-fill text-warning" : "bi-bookmark"}`} style={{ fontSize: "1.5rem", cursor: "pointer" }} onClick={handleToggleBookmark} title={isBookmarked ? "Remove Bookmark" : "Add Bookmark"}></i>
+                        </div>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {/* Cafe Overview */}
+                        <div className="mb-4">
+                            <div className="cafe-image-container mb-3" style={{ maxHeight: "300px", overflow: "hidden" }}>
+                                <img src={selectedCafe.imageUrl || "https://images.unsplash.com/photo-1554118811-1e0d58224f24"} alt={selectedCafe.name} className="cafe-image w-100" style={{ objectFit: "cover", height: "100%" }} />
+                            </div>
+                            {selectedCafe.isOpen ? <div className="status-banner bg-open">OPEN</div> : <div className="status-banner bg-closed">CLOSE</div>}
+                            <p className="mt-3">
+                                <strong>Opening Hours:</strong> {selectedCafe.openingHours || "08:00 - 22:00"}
+                            </p>
+                            <p>
+                                <strong>Location:</strong> {selectedCafe.address}, {selectedCafe.city}
+                            </p>
+                            <p>
+                                <strong>Description:</strong> {selectedCafe.description || "No description available."}
+                            </p>
+                            <p>
+                                <strong>Current Capacity:</strong> {selectedCafe.currentCapacity || "0"} / {selectedCafe.maxCapacityPerSlot}
+                            </p>
+                        </div>
+
+                        <hr />
+
+                        {/* Reservation Form */}
+                        <div className="mb-4">
+                            <h4>Make a Reservation</h4>
+                            <Form onSubmit={handleReservationSubmit}>
+                                <Form.Group className="mb-2">
+                                    <Form.Label>Date</Form.Label>
+                                    <Form.Control type="date" value={newReservation.date} onChange={(e) => setNewReservation({ ...newReservation, date: e.target.value })} required />
+                                </Form.Group>
+                                <Form.Group className="mb-2">
+                                    <Form.Label>Time</Form.Label>
+                                    <Form.Control type="time" value={newReservation.time} onChange={(e) => setNewReservation({ ...newReservation, time: e.target.value })} required />
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Number of Guests</Form.Label>
+                                    <Form.Control type="number" min="1" max="10" value={newReservation.guests} onChange={(e) => setNewReservation({ ...newReservation, guests: e.target.value })} required />
+                                </Form.Group>
+                                <Button type="submit" variant="primary">
+                                    Book Table
+                                </Button>
+                            </Form>
+                        </div>
+
+                        <hr />
+
+                        {/* Review Form */}
+                        <div className="mb-3">
+                            <h4>Leave a Review</h4>
+                            <Form onSubmit={handleReviewSubmit}>
+                                <Form.Group className="mb-2">
+                                    <Form.Label>Rating</Form.Label>
+                                    <Form.Select value={newReview.rating} onChange={(e) => setNewReview({ ...newReview, rating: Number(e.target.value) })}>
+                                        <option value="5">5 Stars</option>
+                                        <option value="4">4 Stars</option>
+                                        <option value="3">3 Stars</option>
+                                        <option value="2">2 Stars</option>
+                                        <option value="1">1 Star</option>
+                                    </Form.Select>
+                                </Form.Group>
+                                <Form.Group className="mb-2">
+                                    <Form.Label>Crowd Report</Form.Label>
+                                    <Form.Select value={newReview.crowdReport} onChange={(e) => setNewReview({ ...newReview, crowdReport: e.target.value })}>
+                                        <option value="quiet">Quiet</option>
+                                        <option value="moderate">Moderate</option>
+                                        <option value="packed">Packed</option>
+                                    </Form.Select>
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Comment</Form.Label>
+                                    <Form.Control as="textarea" rows={3} value={newReview.comment} onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })} required />
+                                </Form.Group>
+                                <Button type="submit" variant="success">
+                                    Submit Review
+                                </Button>
+                            </Form>
+                        </div>
+                    </Modal.Body>
+                </Modal>
+            )}
         </div>
     );
 };
