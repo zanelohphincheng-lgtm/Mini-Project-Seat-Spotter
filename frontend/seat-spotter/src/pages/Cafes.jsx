@@ -8,19 +8,32 @@ import "../styles/cafes.css";
 const Cafes = () => {
     const [cafes, setCafes] = useState([]);
     const [selectedCafe, setSelectedCafe] = useState(null);
+    const [cafeReviews, setCafeReviews] = useState([]);
     const [showCafeDetailModal, setShowCafeDetailModal] = useState();
 
     // Form states
     const [newReservation, setNewReservation] = useState({ date: "", time: "", guests: 1 });
-    const [newReview, setNewReview] = useState({ rating: 5, comment: "" });
+    const [newReview, setNewReview] = useState({ rating: 5, comment: "", crowdReport: "moderate" });
     const [isBookmarked, setIsBookmarked] = useState(false);
 
     const handleOpenCafeDetailModal = (cafe) => {
         setSelectedCafe(cafe);
         setNewReservation({ date: "", time: "", guests: 1 });
-        setNewReview({ rating: 5, comment: "" });
+        setNewReview({ rating: 5, comment: "", crowdReport: "moderate" });
         setIsBookmarked(false);
         setShowCafeDetailModal(true);
+        // Fetch reviews for the clicked cafe
+        fetchCafeReviews(cafe._id);
+    };
+
+    const fetchCafeReviews = async (cafeId) => {
+        try {
+            const res = await api.get(`/reviews/${cafeId}`);
+            setCafeReviews(res.data.data || []);
+        } catch (err) {
+            console.error("Failed to fetch cafe reviews:", err);
+            setCafeReviews([]);
+        }
     };
 
     const handleCloseCafeDetail = () => {
@@ -68,6 +81,8 @@ const Cafes = () => {
             });
             alert("Review submitted successfully!");
             setNewReview({ rating: 5, crowdReport: "moderate", comment: "" });
+            // Refresh reviews list
+            fetchCafeReviews(selectedCafe._id);
         } catch (err) {
             console.error("Failed to submit review:", err);
             alert("Failed to submit review.");
@@ -162,7 +177,44 @@ const Cafes = () => {
 
                         <hr />
 
-                        {/* Reservation Form */}
+                        <div className="mb-4">
+                            <h4>Reviews :</h4>
+                            <div>
+                                {cafeReviews && cafeReviews.length > 0 ? (
+                                    cafeReviews.map((rev) => (
+                                        <div className="review-box" key={rev._id}>
+                                            <p className="review-text">
+                                                <strong>User : </strong>
+                                                {rev.user?.name || rev.user || "Anonymous"}
+                                            </p>
+                                            <p className="review-text">
+                                                <strong>Rating : </strong>
+                                                {rev.rating} ⭐
+                                            </p>
+                                            <p className="review-text">
+                                                <strong>Comment : </strong>
+                                                {rev.comment}
+                                            </p>
+                                            <p className="review-text">
+                                                <strong>Crowd Report : </strong>
+                                                {rev.crowdReport}
+                                            </p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="review-box">
+                                        <p className="no-review-text">
+                                            <strong>No reviews yet. Be the first to leave one!</strong>
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        <hr />
+
+                        <div>
+                            (selectedCafe.isOpen === "true" || user.token !== null ? (
+                            {/* Reservation Form */}
                         <div className="mb-4">
                             <h4>Make a Reservation</h4>
                             <Form onSubmit={handleReservationSubmit}>
@@ -216,6 +268,10 @@ const Cafes = () => {
                                     Submit Review
                                 </Button>
                             </Form>
+                        </div>
+                        ):(
+                            <p>Login first to make Reservation or Leave a Review</p>
+                        ))
                         </div>
                     </Modal.Body>
                 </Modal>

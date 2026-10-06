@@ -6,7 +6,6 @@ import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Cafes from "./pages/Cafes";
-import CafeDetail from "./pages/CafesDetails";
 import Dashboard from "./pages/Dashboard";
 import ManageUser from "./pages/ManageUser";
 import ManageCafe from "./pages/ManageCafe";
@@ -21,7 +20,6 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/cafes" element={<Cafes />} />
-                <Route path="/cafes/:id" element={<CafeDetail />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/manage-user" element={<ManageUser />} />
                 <Route path="/manage-cafe" element={<ManageCafe />} />

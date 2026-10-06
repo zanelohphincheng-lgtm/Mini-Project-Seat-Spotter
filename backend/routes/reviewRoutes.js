@@ -5,6 +5,7 @@ const ReviewController = require('../controllers/ReviewController')
 
 router.use(express.json())
 
+router.get('/', auth.authenticate, ReviewController.getAllReviews)
 router.get('/:id', auth.authenticate, ReviewController.getReviewsByCafe)
 router.post('/', auth.authenticate, ReviewController.createReview)
 router.patch('/:id', auth.authenticate, ReviewController.updateReview)

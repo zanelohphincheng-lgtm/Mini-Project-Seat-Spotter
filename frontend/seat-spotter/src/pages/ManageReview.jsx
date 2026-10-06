@@ -27,14 +27,13 @@ const ManageReview = () => {
 
     // Modal Visibility States
     const [showAddModal, setShowAddModal] = useState(false);
-    const [showPasswordModal, setShowPasswordModal] = useState(false);
+    const [showReviewModal, setShowReviewModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     // Form Inputs for Modals
-    const [newPassword, setNewPassword] = useState("");
-    const [newReview, setNewReview] = useState({ name: "", email: "", password: "", role: "" });
-    const [selectedReview, setSelectedReview] = useState({ name: "", email: "", role: "review" });
+    const [newReview, setNewReview] = useState({ _id: "", rating: 5, comment: "", crowdReport: "moderate" });
+    const [selectedReview, setSelectedReview] = useState({ _id: "", rating: 5, comment: "", crowdReport: "moderate" });
 
     useEffect(() => {
         fetchReviews();
@@ -50,17 +49,20 @@ const ManageReview = () => {
     };
 
     // Filter reviews by search term
-    const filteredReviews = reviews.filter((u) => u.name?.toLowerCase().includes(search.toLowerCase()) || u.email?.toLowerCase().includes(search.toLowerCase()));
+    const filteredReviews = reviews.filter((r) => 
+        (r.cafe?.name || r.cafe || "").toLowerCase().includes(search.toLowerCase()) ||
+        (r.user?.name || r.user || "").toLowerCase().includes(search.toLowerCase()) ||
+        (r.comment || "").toLowerCase().includes(search.toLowerCase())
+    );
 
     // --- Modal Handlers ---
     const handleOpenAddModal = () => {
-        setNewReview({ name: "", email: "", password: "", role: "" });
+        setNewReview({ _id: "", rating: 5, comment: "", crowdReport: "moderate" });
         setShowAddModal(true);
     };
 
-    const handleOpenPasswordModal = (review) => {
+    const handleNavigateToReview = (review) => {
         setSelectedReview(review);
-        setNewPassword("");
         setShowPasswordModal(true);
     };
 
@@ -137,7 +139,7 @@ const ManageReview = () => {
         }
         try {
             await api.delete(`/reviews/${selectedReview._id}`);
-            const updatedList = reviews.filter((u) => u._id !== selectedReview._id)
+            const updatedList = reviews.filter((u) => u._id !== selectedReview._id);
             setReviews(updatedList);
             alert("Review deleted successfully!");
             setShowDeleteModal(false);

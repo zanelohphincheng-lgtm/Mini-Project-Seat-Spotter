@@ -1,5 +1,6 @@
 const Review = require("../models/Review");
 const Cafe = require("../models/Cafe");
+const User = require("../models/User");
 
 // @desc    Create a review for a specific café
 // @route   POST /api/cafes/:cafeId/reviews
@@ -14,12 +15,31 @@ exports.createReview = async (req, res) => {
     }
 };
 
+// @desc    Get all reviews for manage page
+// @route   GET /api/cafes/reviews
+// @access  Public
+exports.getAllReviews = async (req, res) => {
+    try {
+        const reviews = await Review.find()
+            .populate("user", "name") // Foreign key lookup: attaches reviewer's name
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            count: reviews.length,
+            data: reviews,
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
 // @desc    Get all reviews for a specific café
 // @route   GET /api/cafes/:cafeId/reviews
 // @access  Public
 exports.getReviewsByCafe = async (req, res) => {
     try {
-        const reviews = await Review.find({ cafe: req.params.cafeId })
+        const reviews = await Review.find({ cafe: req.params.id })
             .populate("user", "name") // Foreign key lookup: attaches reviewer's name
             .sort({ createdAt: -1 });
 

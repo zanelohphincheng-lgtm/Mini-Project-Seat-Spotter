@@ -32,9 +32,8 @@ const ManageReservation = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     // Form Inputs for Modals
-    const [newPassword, setNewPassword] = useState("");
-    const [newReservation, setNewReservation] = useState({ name: "", email: "", password: "", role: "" });
-    const [selectedReservation, setSelectedReservation] = useState({ name: "", email: "", role: "reservation" });
+    const [newReservation, setNewReservation] = useState({ cafeId: "", bookingDate: "", timeSlot: "", partySize: 1, status: "pending" });
+    const [selectedReservation, setSelectedReservation] = useState({ _id: "", bookingDate: "", timeSlot: "", partySize: 1, status: "pending" });
 
     useEffect(() => {
         fetchReservations();
@@ -54,14 +53,8 @@ const ManageReservation = () => {
 
     // --- Modal Handlers ---
     const handleOpenAddModal = () => {
-        setNewReservation({ name: "", email: "", password: "", role: "" });
+        setNewReservation({ cafeId: "", bookingDate: "", timeSlot: "", partySize: 1, status: "pending" });
         setShowAddModal(true);
-    };
-
-    const handleOpenPasswordModal = (reservation) => {
-        setSelectedReservation(reservation);
-        setNewPassword("");
-        setShowPasswordModal(true);
     };
 
     const handleOpenEditModal = (reservation) => {
@@ -94,24 +87,6 @@ const ManageReservation = () => {
         }
     };
 
-    const handleResetPassword = async (e) => {
-        e.preventDefault();
-        if (!selectedReservation._id) {
-            alert("Error: Cafe ID is missing!");
-            return;
-        }
-        try {
-            await api.patch(`/reservations/${selectedReservation._id}/reset-password`, { password: newPassword });
-            await fetchReservations();
-            setNewPassword("");
-            alert(`Password updated successfully for ${selectedReservation.name}!`);
-            setShowPasswordModal(false);
-        } catch (err) {
-            console.error("Failed to reset password:", err);
-            alert("Error updating password.");
-        }
-    };
-
     const handleUpdateReservation = async (e) => {
         e.preventDefault();
         if (!selectedReservation._id) {
@@ -137,7 +112,7 @@ const ManageReservation = () => {
         }
         try {
             await api.delete(`/reservations/${selectedReservation._id}`);
-            const updatedList = reservations.filter((u) => u._id !== selectedReservation._id)
+            const updatedList = reservations.filter((u) => u._id !== selectedReservation._id);
             setReservations(updatedList);
             alert("Reservation deleted successfully!");
             setShowDeleteModal(false);

@@ -157,3 +157,20 @@
     font-size: 1rem;
   }
 }
+
+.review-box{
+  background-color: #f9ebd8;
+  padding: 10px;
+  border: 1px solid #8c4242;
+  border-radius: 25px;
+}
+
+.no-review-text{
+  margin: 0;
+  text-align: center;
+  font-size: 25px;
+}
+
+.review-text{
+  margin: 5px;
+}
