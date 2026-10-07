@@ -26,14 +26,49 @@ const ManageReservation = () => {
     const [search, setSearch] = useState("");
 
     // Modal Visibility States
+    const [showViewModal, setShowViewModal] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
-    const [showPasswordModal, setShowPasswordModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    // Form Inputs for Modals
-    const [newReservation, setNewReservation] = useState({ cafeId: "", bookingDate: "", timeSlot: "", partySize: 1, status: "pending" });
-    const [selectedReservation, setSelectedReservation] = useState({ _id: "", bookingDate: "", timeSlot: "", partySize: 1, status: "pending" });
+    // Add options states at the top of ManageReservation component
+    const [cafesList, setCafesList] = useState([]);
+    const [usersList, setUsersList] = useState([]);
+
+    // Initial state structures for reservation forms
+    const [newReservation, setNewReservation] = useState({
+        cafe: "",
+        user: "",
+        bookingDate: "",
+        timeSlot: "",
+        partySize: 1,
+        status: "pending",
+    });
+
+    const [selectedReservation, setSelectedReservation] = useState({
+        _id: "",
+        cafe: "",
+        user: "",
+        bookingDate: "",
+        timeSlot: "",
+        partySize: 1,
+        status: "pending",
+    });
+    
+    // Fetching existing cafes and users as option for add and edit
+    useEffect(() => {
+        fetchOptions();
+    }, []);
+
+    const fetchOptions = async () => {
+        try {
+            const [cafesRes, usersRes] = await Promise.all([api.get("/cafes"), api.get("/users")]);
+            setCafesList(cafesRes.data);
+            setUsersList(usersRes.data);
+        } catch (err) {
+            console.error("Failed to fetch cafes or users:", err);
+        }
+    };
 
     useEffect(() => {
         fetchReservations();
@@ -42,18 +77,42 @@ const ManageReservation = () => {
     const fetchReservations = async () => {
         try {
             const res = await api.get("/reservations");
-            setReservations(res.data);
+            setReservations(res.data.data);
         } catch (err) {
             console.error("Failed to fetch reservations:", err);
         }
     };
 
     // Filter reservations by search term
-    const filteredReservations = reservations.filter((u) => u.name?.toLowerCase().includes(search.toLowerCase()) || u.email?.toLowerCase().includes(search.toLowerCase()));
+    const filteredReservations = Array.isArray(reservations)
+        ? reservations.filter((r) => {
+              const query = search.toLowerCase();
+              const cafeName = (r.cafe?.name || r.cafe || "").toString().toLowerCase();
+              const userName = (r.user?.name || r.user || "").toString().toLowerCase();
+              const bookingDate = (r.bookingDate || "").toString().toLowerCase();
+              const timeSlot = (r.timeSlot || "").toString().toLowerCase();
+              const partySize = (r.partySize || "").toString().toLowerCase();
+              const status = (r.status || "").toString().toLowerCase();
+
+              return cafeName.includes(query) || userName.includes(query) || bookingDate.includes(query) || timeSlot.includes(query) || partySize.includes(query) || status.includes(query);
+          })
+        : [];
 
     // --- Modal Handlers ---
+    const handleOpenViewModal = (reservation) => {
+        setSelectedReservation(reservation);
+        setShowViewModal(true);
+    };
+
     const handleOpenAddModal = () => {
-        setNewReservation({ cafeId: "", bookingDate: "", timeSlot: "", partySize: 1, status: "pending" });
+        setNewReservation({
+            cafe: cafesList[0]?._id || "",
+            user: usersList[0]?._id || "",
+            bookingDate: "",
+            timeSlot: "12:00",
+            partySize: 1,
+            status: "pending",
+        });
         setShowAddModal(true);
     };
 
@@ -68,9 +127,9 @@ const ManageReservation = () => {
     };
 
     // Handle close
+    const handleCloseView = () => setShowViewModal(false);
     const handleCloseAdd = () => setShowAddModal(false);
     const handleCloseEdit = () => setShowEditModal(false);
-    const handleClosePassword = () => setShowPasswordModal(false);
     const handleCloseDelete = () => setShowDeleteModal(false);
 
     // --- API Action Submit Functions ---
@@ -112,7 +171,7 @@ const ManageReservation = () => {
         }
         try {
             await api.delete(`/reservations/${selectedReservation._id}`);
-            const updatedList = reservations.filter((u) => u._id !== selectedReservation._id);
+            const updatedList = reservations.filter((r) => r._id !== selectedReservation._id);
             setReservations(updatedList);
             alert("Reservation deleted successfully!");
             setShowDeleteModal(false);
@@ -147,8 +206,8 @@ const ManageReservation = () => {
                         <tr>
                             <th className="first-column">No.</th>
                             <th className="second-column">Cafe</th>
-                            <th className="thrid-column">User</th>
-                            <th className="forth-column">Booking Date</th>
+                            <th className="thrid-column-v2">User</th>
+                            <th className="forth-column-v2">Booking Date</th>
                             <th className="fifth-column">Time Slot</th>
                             <th className="sixth-column">Party Size</th>
                             <th className="seventh-column">Status</th>
@@ -160,14 +219,14 @@ const ManageReservation = () => {
                             filteredReservations.map((reservation, index) => (
                                 <tr className="border-bottom border-dark" key={reservation._id}>
                                     <td className="first-column">{index + 1}.</td>
-                                    <td className="second-column">{reservation.cafe}</td>
-                                    <td className="thrid-column">{reservation.user}</td>
-                                    <td className="forth-column">{reservation.bookingDate}</td>
+                                    <td className="second-column">{reservation.cafe?.name || reservation.cafe || "N/A"}</td>
+                                    <td className="thrid-column-v2">{reservation.user?.name || reservation.user || "N/A"}</td>
+                                    <td className="forth-column-v2">{reservation.bookingDate}</td>
                                     <td className="fifth-column">{reservation.timeSlot}</td>
                                     <td className="sixth-column">{reservation.partySize}</td>
                                     <td className="seventh-column status-pill">{reservation.status}</td>
                                     <td className="final-column">
-                                        <Button onClick={() => handleOpenPasswordModal(reservation)} className="action-icon-btn btn-view">
+                                        <Button onClick={() => handleOpenViewModal(reservation)} className="action-icon-btn btn-view">
                                             <i className="bi bi-eye"></i>
                                         </Button>
                                         <Button onClick={() => handleOpenEditModal(reservation)} className="action-icon-btn btn-pencil">
@@ -191,109 +250,190 @@ const ManageReservation = () => {
                     </tbody>
                 </table>
             </div>
-            {/* Add Reservation Modal */}
-            <div className="modal-container">
-                <Modal show={showAddModal} onHide={handleCloseAdd}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Add New Reservation</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <form onSubmit={handleAddReservation}>
-                            <div className="modal-form-input">
-                                <label>Name :</label>
-                                <input required type="text" placeholder="Name" value={newReservation.name} onChange={(e) => setNewReservation({ ...newReservation, name: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Email :</label>
-                                <input required type="text" placeholder="Email" value={newReservation.email} onChange={(e) => setNewReservation({ ...newReservation, email: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Password :</label>
-                                <input required type="text" placeholder="Password" value={newReservation.password} onChange={(e) => setNewReservation({ ...newReservation, password: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Role :</label>
-                                <select required value={newReservation.role} onChange={(e) => setNewReservation({ ...newReservation, role: e.target.value })}>
-                                    <option value="" disabled>
-                                        Select Role
-                                    </option>
-                                    <option value="reservation">Reservation</option>
-                                    <option value="admin">Admin</option>
-                                </select>
-                            </div>
-                            <button className="submit-btn" type="submit">
-                                Add Reservation
-                            </button>
-                        </form>
-                    </Modal.Body>
-                </Modal>
-            </div>
 
-            {/* Change Password Modal */}
-            <div className="modal-container">
-                <Modal show={showPasswordModal} onHide={handleClosePassword}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Change Reservation Password</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <form onSubmit={handleResetPassword}>
-                            <div className="modal-form-input">
-                                <label>New Password :</label>
-                                <input required type="text" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-                            </div>
-                            <button className="submit-btn" type="submit">
-                                Update Password
-                            </button>
-                        </form>
-                    </Modal.Body>
-                </Modal>
-            </div>
+            {/* View Reservation Detail Modal */}
+            <Modal show={showViewModal} onHide={handleCloseView} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Reservation Details</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="reservation-details">
+                        <p>
+                            <strong>Reservation ID:</strong> {selectedReservation._id}
+                        </p>
+                        <p>
+                            <strong>Cafe:</strong> {selectedReservation.cafe?.name || selectedReservation.cafe}
+                        </p>
+                        <p>
+                            <strong>User:</strong> {selectedReservation.user?.name || selectedReservation.user}
+                        </p>
+                        <p>
+                            <strong>Email:</strong> {selectedReservation.user?.email || "N/A"}
+                        </p>
+                        <p>
+                            <strong>Booking Date:</strong> {selectedReservation.bookingDate}
+                        </p>
+                        <p>
+                            <strong>Time Slot:</strong> {selectedReservation.timeSlot}
+                        </p>
+                        <p>
+                            <strong>Party Size:</strong> {selectedReservation.partySize} people
+                        </p>
+                        <p>
+                            <strong>Status:</strong> <span className="status-pill">{selectedReservation.status}</span>
+                        </p>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseView}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Add Reservation Modal */}
+            <Modal show={showAddModal} onHide={handleCloseAdd} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Add New Reservation</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form onSubmit={handleAddReservation}>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Cafe :</Form.Label>
+                            <Form.Select required value={newReservation.cafe} onChange={(e) => setNewReservation({ ...newReservation, cafe: e.target.value })}>
+                                <option value="" disabled>
+                                    Select Cafe
+                                </option>
+                                {cafesList.map((c) => (
+                                    <option key={c._id} value={c._id}>
+                                        {c.name}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>User :</Form.Label>
+                            <Form.Select required value={newReservation.user} onChange={(e) => setNewReservation({ ...newReservation, user: e.target.value })}>
+                                <option value="" disabled>
+                                    Select User
+                                </option>
+                                {usersList.map((u) => (
+                                    <option key={u._id} value={u._id}>
+                                        {u.name} ({u.email})
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Booking Date :</Form.Label>
+                            <Form.Control required type="date" value={newReservation.bookingDate} onChange={(e) => setNewReservation({ ...newReservation, bookingDate: e.target.value })} />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Time Slot :</Form.Label>
+                            <Form.Control required type="time" value={newReservation.timeSlot} onChange={(e) => setNewReservation({ ...newReservation, timeSlot: e.target.value })} />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Party Size :</Form.Label>
+                            <Form.Control required type="number" min="1" value={newReservation.partySize} onChange={(e) => setNewReservation({ ...newReservation, partySize: e.target.value })} />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Status :</Form.Label>
+                            <Form.Select value={newReservation.status} onChange={(e) => setNewReservation({ ...newReservation, status: e.target.value })}>
+                                <option value="pending">Pending</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </Form.Select>
+                        </Form.Group>
+
+                        <Button className="submit-btn w-100 mt-2" type="submit">
+                            Add Reservation
+                        </Button>
+                    </Form>
+                </Modal.Body>
+            </Modal>
 
             {/* Edit Reservation Modal */}
-            <div className="modal-container">
-                <Modal show={showEditModal} onHide={handleCloseEdit}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Update Reservation</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <form onSubmit={handleUpdateReservation}>
-                            <div className="modal-form-input">
-                                <label>Name :</label>
-                                <input required type="text" placeholder="Name" value={selectedReservation.name || ""} onChange={(e) => setSelectedReservation({ ...selectedReservation, name: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Email :</label>
-                                <input required type="text" placeholder="Email" value={selectedReservation.email || ""} onChange={(e) => setSelectedReservation({ ...selectedReservation, email: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Role :</label>
-                                <select required value={selectedReservation.role} onChange={(e) => setSelectedReservation({ ...selectedReservation, role: e.target.value })}>
-                                    <option value="" disabled>
-                                        Select Role
+            <Modal show={showEditModal} onHide={handleCloseEdit} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Update Reservation</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form onSubmit={handleUpdateReservation}>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Cafe :</Form.Label>
+                            <Form.Select required value={selectedReservation.cafe || ""} onChange={(e) => setSelectedReservation({ ...selectedReservation, cafe: e.target.value })}>
+                                <option value="" disabled>
+                                    Select Cafe
+                                </option>
+                                {cafesList.map((c) => (
+                                    <option key={c._id} value={c._id}>
+                                        {c.name}
                                     </option>
-                                    <option value="reservation">Reservation</option>
-                                    <option value="admin">Admin</option>
-                                </select>
-                            </div>
-                            <button className="submit-btn" type="submit">
-                                Update Reservation
-                            </button>
-                        </form>
-                    </Modal.Body>
-                </Modal>
-            </div>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>User :</Form.Label>
+                            <Form.Select required value={selectedReservation.user || ""} onChange={(e) => setSelectedReservation({ ...selectedReservation, user: e.target.value })}>
+                                <option value="" disabled>
+                                    Select User
+                                </option>
+                                {usersList.map((u) => (
+                                    <option key={u._id} value={u._id}>
+                                        {u.name} ({u.email})
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Booking Date :</Form.Label>
+                            <Form.Control required type="date" value={selectedReservation.bookingDate || ""} onChange={(e) => setSelectedReservation({ ...selectedReservation, bookingDate: e.target.value })} />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Time Slot :</Form.Label>
+                            <Form.Control required type="time" value={selectedReservation.timeSlot || ""} onChange={(e) => setSelectedReservation({ ...selectedReservation, timeSlot: e.target.value })} />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Party Size :</Form.Label>
+                            <Form.Control required type="number" min="1" value={selectedReservation.partySize || 1} onChange={(e) => setSelectedReservation({ ...selectedReservation, partySize: e.target.value })} />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Status :</Form.Label>
+                            <Form.Select value={selectedReservation.status || "pending"} onChange={(e) => setSelectedReservation({ ...selectedReservation, status: e.target.value })}>
+                                <option value="pending">Pending</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </Form.Select>
+                        </Form.Group>
+
+                        <Button className="submit-btn w-100 mt-2" type="submit">
+                            Update Reservation
+                        </Button>
+                    </Form>
+                </Modal.Body>
+            </Modal>
 
             {/* Delete Reservation Modal */}
             <div className="modal-container">
                 <Modal show={showDeleteModal} onHide={handleCloseDelete}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Confirm Delete {selectedReservation.name}?</Modal.Title>
+                        <Modal.Title>Confirm Delete Reservation by {selectedReservation.user}?</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <form onSubmit={handleDeleteReservation}>
                             <div className="delete-form">
-                                <h3>Are you sure you want to delete {selectedReservation.name}?</h3>
-                                <p>Once deleted all data related to {selectedReservation.name} will be gone forever.</p>
+                                <h3>Are you sure you want to delete this reservation?</h3>
+                                <p>Once deleted, this reservation will be gone forever.</p>
                                 <button className="delete-btn" type="submit">
                                     Delete
                                 </button>

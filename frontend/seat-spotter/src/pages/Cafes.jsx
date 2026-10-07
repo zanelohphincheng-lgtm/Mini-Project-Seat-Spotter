@@ -11,6 +11,10 @@ const Cafes = () => {
     const [cafeReviews, setCafeReviews] = useState([]);
     const [showCafeDetailModal, setShowCafeDetailModal] = useState();
 
+    // Check if user is logged in
+    const token = localStorage.getItem("token");
+    const isLoggedIn = !!token;
+
     // Form states
     const [newReservation, setNewReservation] = useState({ date: "", time: "", guests: 1 });
     const [newReview, setNewReview] = useState({ rating: 5, comment: "", crowdReport: "moderate" });
@@ -189,7 +193,7 @@ const Cafes = () => {
                                             </p>
                                             <p className="review-text">
                                                 <strong>Rating : </strong>
-                                                {rev.rating} ⭐
+                                                {rev.rating}⭐
                                             </p>
                                             <p className="review-text">
                                                 <strong>Comment : </strong>
@@ -213,65 +217,72 @@ const Cafes = () => {
                         <hr />
 
                         <div>
-                            (selectedCafe.isOpen === "true" || user.token !== null ? (
-                            {/* Reservation Form */}
-                        <div className="mb-4">
-                            <h4>Make a Reservation</h4>
-                            <Form onSubmit={handleReservationSubmit}>
-                                <Form.Group className="mb-2">
-                                    <Form.Label>Date</Form.Label>
-                                    <Form.Control type="date" value={newReservation.date} onChange={(e) => setNewReservation({ ...newReservation, date: e.target.value })} required />
-                                </Form.Group>
-                                <Form.Group className="mb-2">
-                                    <Form.Label>Time</Form.Label>
-                                    <Form.Control type="time" value={newReservation.time} onChange={(e) => setNewReservation({ ...newReservation, time: e.target.value })} required />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Number of Guests</Form.Label>
-                                    <Form.Control type="number" min="1" max="10" value={newReservation.guests} onChange={(e) => setNewReservation({ ...newReservation, guests: e.target.value })} required />
-                                </Form.Group>
-                                <Button type="submit" variant="primary">
-                                    Book Table
-                                </Button>
-                            </Form>
-                        </div>
-
-                        <hr />
-
-                        {/* Review Form */}
-                        <div className="mb-3">
-                            <h4>Leave a Review</h4>
-                            <Form onSubmit={handleReviewSubmit}>
-                                <Form.Group className="mb-2">
-                                    <Form.Label>Rating</Form.Label>
-                                    <Form.Select value={newReview.rating} onChange={(e) => setNewReview({ ...newReview, rating: Number(e.target.value) })}>
-                                        <option value="5">5 Stars</option>
-                                        <option value="4">4 Stars</option>
-                                        <option value="3">3 Stars</option>
-                                        <option value="2">2 Stars</option>
-                                        <option value="1">1 Star</option>
-                                    </Form.Select>
-                                </Form.Group>
-                                <Form.Group className="mb-2">
-                                    <Form.Label>Crowd Report</Form.Label>
-                                    <Form.Select value={newReview.crowdReport} onChange={(e) => setNewReview({ ...newReview, crowdReport: e.target.value })}>
-                                        <option value="quiet">Quiet</option>
-                                        <option value="moderate">Moderate</option>
-                                        <option value="packed">Packed</option>
-                                    </Form.Select>
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Comment</Form.Label>
-                                    <Form.Control as="textarea" rows={3} value={newReview.comment} onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })} required />
-                                </Form.Group>
-                                <Button type="submit" variant="success">
-                                    Submit Review
-                                </Button>
-                            </Form>
-                        </div>
-                        ):(
-                            <p>Login first to make Reservation or Leave a Review</p>
-                        ))
+                            { !isLoggedIn ? (
+                                <div className="warning-sign">
+                                    <p>Login first to make Reservation or Leave a Review</p>
+                                </div>
+                            ): selectedCafe.isOpen ? (
+                                <>
+                                    {/* Reservation Form */}
+                                    <div className="mb-4">
+                                        <h4>Make a Reservation</h4>
+                                        <Form onSubmit={handleReservationSubmit}>
+                                            <Form.Group className="mb-2">
+                                                <Form.Label>Date</Form.Label>
+                                                <Form.Control type="date" value={newReservation.date} onChange={(e) => setNewReservation({ ...newReservation, date: e.target.value })} required />
+                                            </Form.Group>
+                                            <Form.Group className="mb-2">
+                                                <Form.Label>Time</Form.Label>
+                                                <Form.Control type="time" value={newReservation.time} onChange={(e) => setNewReservation({ ...newReservation, time: e.target.value })} required />
+                                            </Form.Group>
+                                            <Form.Group className="mb-3">
+                                                <Form.Label>Number of Guests</Form.Label>
+                                                <Form.Control type="number" min="1" max="10" value={newReservation.guests} onChange={(e) => setNewReservation({ ...newReservation, guests: e.target.value })} required />
+                                            </Form.Group>
+                                            <Button type="submit" variant="primary">
+                                                Book Table
+                                            </Button>
+                                        </Form>
+                                    </div>
+                                    <hr />
+                                    {/* Review Form */}
+                                    <div className="mb-3">
+                                        <h4>Leave a Review</h4>
+                                        <Form onSubmit={handleReviewSubmit}>
+                                            <Form.Group className="mb-2">
+                                                <Form.Label>Rating</Form.Label>
+                                                <Form.Select value={newReview.rating} onChange={(e) => setNewReview({ ...newReview, rating: Number(e.target.value) })}>
+                                                    <option value="5">5 Stars</option>
+                                                    <option value="4">4 Stars</option>
+                                                    <option value="3">3 Stars</option>
+                                                    <option value="2">2 Stars</option>
+                                                    <option value="1">1 Star</option>
+                                                </Form.Select>
+                                            </Form.Group>
+                                            <Form.Group className="mb-2">
+                                                <Form.Label>Crowd Report</Form.Label>
+                                                <Form.Select value={newReview.crowdReport} onChange={(e) => setNewReview({ ...newReview, crowdReport: e.target.value })}>
+                                                    <option value="quiet">Quiet</option>
+                                                    <option value="moderate">Moderate</option>
+                                                    <option value="packed">Packed</option>
+                                                </Form.Select>
+                                            </Form.Group>
+                                            <Form.Group className="mb-3">
+                                                <Form.Label>Comment</Form.Label>
+                                                <Form.Control as="textarea" rows={3} value={newReview.comment} onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })} required />
+                                            </Form.Group>
+                                            <Button type="submit" variant="success">
+                                                Submit Review
+                                            </Button>
+                                        </Form>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="warning-sign">
+                                    <p>Sorry!</p>
+                                    <p>Cafe currently closed please try again tomorrow!</p>
+                                </div>
+                            )}
                         </div>
                     </Modal.Body>
                 </Modal>

@@ -21,6 +21,7 @@ exports.createReview = async (req, res) => {
 exports.getAllReviews = async (req, res) => {
     try {
         const reviews = await Review.find()
+            .populate("cafe", "name") // Foreign key lookup: attaches cafe's name
             .populate("user", "name") // Foreign key lookup: attaches reviewer's name
             .sort({ createdAt: -1 });
 

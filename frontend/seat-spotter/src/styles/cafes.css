@@ -1,16 +1,16 @@
 /* Page Background */
 .cafes-body {
-  background-color: #fffcf1; /* Warm background from design */
-  height: 100vh;
+    background-color: #fffcf1; /* Warm background from design */
+    height: 100vh;
 }
 
-.card-container{
+.card-container {
     max-width: 1000px;
     margin: auto;
     padding-top: 50px;
 }
 
-.loading-text{
+.loading-text {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -19,7 +19,7 @@
     font-weight: bold;
 }
 
-.card-grid{
+.card-grid {
     display: grid;
     grid-template-columns: auto auto;
     gap: 25px;
@@ -27,41 +27,43 @@
 
 /* Cafe Outer Card */
 .cafe-card {
-  background-color: #f9ebd8 !important; /* Slightly darker inner card tint */
-  border: 3px solid #8c4242 !important; /* Distinct brown border from design */
-  border-radius: 20px !important;
-  width: 480px;
-  height: fit-content;
-  display: flex;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer
+    background-color: #f9ebd8 !important; /* Slightly darker inner card tint */
+    border: 3px solid #8c4242 !important; /* Distinct brown border from design */
+    border-radius: 20px !important;
+    width: 480px;
+    height: fit-content;
+    display: flex;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    cursor: pointer;
 }
 
 .cafe-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 /* Image Styling */
 .cafe-image-container {
-  width: 200px;
-  height: 240px;
-  padding-bottom: 10px;
-  padding-right: 5px;
-  flex-shrink: 0;
-  overflow: hidden;
+    width: 200px;
+    height: 240px;
+    padding-bottom: 10px;
+    padding-right: 5px;
+    flex-shrink: 0;
+    overflow: hidden;
 }
 
 .cafe-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  margin: 5px;
-  border-radius: 5%;  
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    margin: 5px;
+    border-radius: 5%;
 }
 
-.card-detail-container{
+.card-detail-container {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -70,7 +72,7 @@
     max-width: 270px;
 }
 
-.card-detail{
+.card-detail {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -78,99 +80,113 @@
 
 /* Cafe Title */
 .cafe-title {
-  font-size: 2rem;
-  font-weight: 800;
-  color: #1a1a1a;
-  margin: 0;
-  text-decoration: none;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin: 0;
+    text-decoration: none;
 }
 
 /* Icon Details */
 .cafe-detail-item {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #1a1a1a;
-  text-decoration: none; 
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    text-decoration: none;
 }
 
 .detail-icon {
-  font-size: 1.4rem;
-  stroke-width: 0.5;
-  margin-right: 5px;
+    font-size: 1.4rem;
+    stroke-width: 0.5;
+    margin-right: 5px;
 }
 
 /* Bookmark Icon Button */
 .bookmark-btn {
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
 }
 
 .bookmark-icon {
-  font-size: 1.5rem;
-  color: #8c4242;
-  transition: color 0.2s ease;
+    font-size: 1.5rem;
+    color: #8c4242;
+    transition: color 0.2s ease;
 }
 
 .bookmark-icon.active {
-  color: #e63946;
+    color: #e63946;
 }
 
 /* Full Width Open/Closed Status Banners */
 .status-banner {
-  width: 100%;
-  text-align: center;
-  padding: 0.4rem 0;
-  border-radius: 10px;
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: #ffffff;
-  letter-spacing: 1px;
-  text-decoration: none;
+    width: 100%;
+    text-align: center;
+    padding: 0.4rem 0;
+    border-radius: 10px;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 1px;
+    text-decoration: none;
 }
 
 .bg-open {
-  background-color: #1b8a5a; /* Bright green badge */
+    background-color: #1b8a5a; /* Bright green badge */
 }
 
 .bg-closed {
-  background-color: #c82333; /* Crimson red badge */
+    background-color: #c82333; /* Crimson red badge */
 }
 
 /* Responsive adjust for mobile screens */
 @media (max-width: 576px) {
-  .card-grid{
-    grid-template-columns: auto;
-  }
+    .card-grid {
+        grid-template-columns: auto;
+    }
 
-  .cafe-image-container {
-    width: 100px;
-    height: 140px;
-  }
-  
-  .cafe-title {
-    font-size: 1.5rem;
-  }
+    .cafe-image-container {
+        width: 100px;
+        height: 140px;
+    }
 
-  .cafe-detail-item {
-    font-size: 1rem;
-  }
+    .cafe-title {
+        font-size: 1.5rem;
+    }
+
+    .cafe-detail-item {
+        font-size: 1rem;
+    }
 }
 
-.review-box{
-  background-color: #f9ebd8;
-  padding: 10px;
-  border: 1px solid #8c4242;
-  border-radius: 25px;
+.review-box {
+    background-color: #f9ebd8;
+    padding: 10px;
+    border: 1px solid #8c4242;
+    border-radius: 25px;
 }
 
-.no-review-text{
-  margin: 0;
-  text-align: center;
-  font-size: 25px;
+.no-review-text {
+    margin: 0;
+    text-align: center;
+    font-size: 25px;
 }
 
-.review-text{
-  margin: 5px;
+.review-text {
+    margin: 5px;
+}
+
+.warning-sign {
+    background-color: #c82333;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    padding: 15px;
+    border-radius: 15px;
+}
+
+.warning-sign p {
+    margin: 0;
+    font-size: 20px;
 }

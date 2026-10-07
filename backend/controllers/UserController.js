@@ -14,7 +14,16 @@ exports.getUserById = async (req, res) => {
 
 exports.register = async (req, res) => {
     try {
-        const user = new User(req.body);
+        const { name, email, password, role } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = new User({
+            name,
+            email,
+            password: hashedPassword,
+            role: role || "user"
+        });
+
         await user.save();
         res.status(201).json({ message: "User registered successfully" });
     } catch (error) {
@@ -45,8 +54,21 @@ exports.login = async (req, res) => {
 
 exports.changePassword = async (req, res) => {
     try {
-        const newPassword = req.body;
-        res.json(newPassword);
+        const { password } = req.body;
+        if (!password) {
+            return res.status(400).json({ error: "Password is required" });
+        }
+
+        // Hash the new password before saving
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.id,
+            { password: hashedPassword },
+            { new: true }
+        );
+
+        res.json({ message: "Password updated successfully" });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

@@ -32,8 +32,8 @@ const ManageUser = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     // Form Inputs for Modals
-    const [newPassword, setNewPassword] = useState("");
-    const [newUser, setNewUser] = useState({ name: "", email: "", password: "", role: "" });
+    const [newPassword, setNewPassword] = useState({ password: ""});
+    const [newUser, setNewUser] = useState({ name: "", email: "", password: "", role: "user" });
     const [selectedUser, setSelectedUser] = useState({ name: "", email: "", role: "user" });
 
     useEffect(() => {
@@ -54,13 +54,13 @@ const ManageUser = () => {
 
     // --- Modal Handlers ---
     const handleOpenAddModal = () => {
-        setNewUser({ name: "", email: "", password: "", role: "" });
+        setNewUser({ name: "", email: "", password: "", role: "user" });
         setShowAddModal(true);
     };
 
     const handleOpenPasswordModal = (user) => {
         setSelectedUser(user);
-        setNewPassword("");
+        setNewPassword({ password: ""});
         setShowPasswordModal(true);
     };
 
@@ -84,7 +84,7 @@ const ManageUser = () => {
     const handleAddUser = async (e) => {
         e.preventDefault();
         try {
-            await api.post(`/users`, newUser);
+            await api.post(`/users/register`, newUser);
             await fetchUsers();
             alert(`New user has been added!`);
             setShowAddModal(false);
@@ -97,13 +97,13 @@ const ManageUser = () => {
     const handleResetPassword = async (e) => {
         e.preventDefault();
         if (!selectedUser._id) {
-            alert("Error: Cafe ID is missing!");
+            alert("Error: User ID is missing!");
             return;
         }
         try {
-            await api.patch(`/users/${selectedUser._id}/reset-password`, { password: newPassword });
+            await api.patch(`/users/${selectedUser._id}/reset-password`, newPassword);
             await fetchUsers();
-            setNewPassword("");
+            setNewPassword({password: ""});
             alert(`Password updated successfully for ${selectedUser.name}!`);
             setShowPasswordModal(false);
         } catch (err) {
@@ -115,7 +115,7 @@ const ManageUser = () => {
     const handleUpdateUser = async (e) => {
         e.preventDefault();
         if (!selectedUser._id) {
-            alert("Error: Cafe ID is missing!");
+            alert("Error: User ID is missing!");
             return;
         }
         try {
@@ -132,7 +132,7 @@ const ManageUser = () => {
     const handleDeleteUser = async (e) => {
         e.preventDefault();
         if (!selectedUser._id) {
-            alert("Error: Cafe ID is missing!");
+            alert("Error: User ID is missing!");
             return;
         }
         try {
@@ -258,7 +258,7 @@ const ManageUser = () => {
                         <form onSubmit={handleResetPassword}>
                             <div className="modal-form-input">
                                 <label>New Password :</label>
-                                <input required type="text" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                                <input required type="text" placeholder="New Password" value={newPassword.password || ""} onChange={(e) => setNewPassword({password: e.target.value})} />
                             </div>
                             <button className="submit-btn" type="submit">
                                 Update Password

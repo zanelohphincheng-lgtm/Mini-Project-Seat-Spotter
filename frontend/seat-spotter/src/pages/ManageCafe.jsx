@@ -92,7 +92,7 @@ const ManageCafe = () => {
             return;
         }
         try {
-            await api.put(`/cafes/${selectedCafe._id}`, selectedCafe);
+            await api.patch(`/cafes/${selectedCafe._id}`, selectedCafe);
             await fetchCafes();
             alert("Cafe updated successfully!");
             setShowEditModal(false);
@@ -289,7 +289,7 @@ const ManageCafe = () => {
                             </div>
                             <div className="modal-form-input">
                                 <label>Current Capacity</label>
-                                <input required min={0} type="number" placeholder="Current Capacity" value={selectedCafe.currentCapacity || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, currentCapacity: Number(e.target.value) })} />
+                                <input required min={0} type="number" placeholder="Current Capacity" value={selectedCafe.currentCapacity || "0"} onChange={(e) => setSelectedCafe({ ...selectedCafe, currentCapacity: Number(e.target.value) })} />
                             </div>
                             <div className="modal-form-input">
                                 <label>Max Capacity</label>

@@ -26,14 +26,47 @@ const ManageReview = () => {
     const [search, setSearch] = useState("");
 
     // Modal Visibility States
+    const [showViewModal, setShowViewModal] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
-    const [showReviewModal, setShowReviewModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    // Form Inputs for Modals
-    const [newReview, setNewReview] = useState({ _id: "", rating: 5, comment: "", crowdReport: "moderate" });
-    const [selectedReview, setSelectedReview] = useState({ _id: "", rating: 5, comment: "", crowdReport: "moderate" });
+    // Add options states at the top of ManageReservation component
+    const [cafesList, setCafesList] = useState([]);
+    const [usersList, setUsersList] = useState([]);
+
+    // Initial state structures for review forms
+    const [newReview, setNewReview] = useState({
+        cafe: "",
+        user: "",
+        rating: 5,
+        comment: "",
+        crowdReport: "moderate",
+    });
+
+    const [selectedReview, setSelectedReview] = useState({
+        _id: "",
+        cafe: "",
+        user: "",
+        rating: 5,
+        comment: "",
+        crowdReport: "moderate",
+    });
+
+    // Fetching existing cafes and users as option for add and edit
+    useEffect(() => {
+        fetchOptions();
+    }, []);
+
+    const fetchOptions = async () => {
+        try {
+            const [cafesRes, usersRes] = await Promise.all([api.get("/cafes"), api.get("/users")]);
+            setCafesList(cafesRes.data);
+            setUsersList(usersRes.data);
+        } catch (err) {
+            console.error("Failed to fetch cafes or users:", err);
+        }
+    };
 
     useEffect(() => {
         fetchReviews();
@@ -42,28 +75,39 @@ const ManageReview = () => {
     const fetchReviews = async () => {
         try {
             const res = await api.get("/reviews");
-            setReviews(res.data);
+            setReviews(res.data.data);
         } catch (err) {
             console.error("Failed to fetch reviews:", err);
         }
     };
 
     // Filter reviews by search term
-    const filteredReviews = reviews.filter((r) => 
-        (r.cafe?.name || r.cafe || "").toLowerCase().includes(search.toLowerCase()) ||
-        (r.user?.name || r.user || "").toLowerCase().includes(search.toLowerCase()) ||
-        (r.comment || "").toLowerCase().includes(search.toLowerCase())
-    );
+    const filteredReviews = Array.isArray(reviews)
+        ? reviews.filter((r) => {
+              const query = search.toLowerCase();
+              const cafeName = (r.cafe?.name || r.cafe || "").toString().toLowerCase();
+              const userName = (r.user?.name || r.user || "").toString().toLowerCase();
+
+              return cafeName.includes(query) || userName.includes(query);
+          })
+        : [];
 
     // --- Modal Handlers ---
-    const handleOpenAddModal = () => {
-        setNewReview({ _id: "", rating: 5, comment: "", crowdReport: "moderate" });
-        setShowAddModal(true);
+    const handleOpenViewModal = (review) => {
+        setSelectedReview(review);
+        setShowViewModal(true);
     };
 
-    const handleNavigateToReview = (review) => {
-        setSelectedReview(review);
-        setShowPasswordModal(true);
+    const handleOpenAddModal = () => {
+        setNewReview({
+            cafe: cafesList[0]?._id || "",
+            user: usersList[0]?._id || "",
+            bookingDate: "",
+            timeSlot: "12:00",
+            partySize: 1,
+            status: "pending",
+        });
+        setShowAddModal(true);
     };
 
     const handleOpenEditModal = (review) => {
@@ -77,9 +121,9 @@ const ManageReview = () => {
     };
 
     // Handle close
+    const handleCloseView = () => setShowViewModal(false);
     const handleCloseAdd = () => setShowAddModal(false);
     const handleCloseEdit = () => setShowEditModal(false);
-    const handleClosePassword = () => setShowPasswordModal(false);
     const handleCloseDelete = () => setShowDeleteModal(false);
 
     // --- API Action Submit Functions ---
@@ -96,28 +140,10 @@ const ManageReview = () => {
         }
     };
 
-    const handleResetPassword = async (e) => {
-        e.preventDefault();
-        if (!selectedReview._id) {
-            alert("Error: Cafe ID is missing!");
-            return;
-        }
-        try {
-            await api.patch(`/reviews/${selectedReview._id}/reset-password`, { password: newPassword });
-            await fetchReviews();
-            setNewPassword("");
-            alert(`Password updated successfully for ${selectedReview.name}!`);
-            setShowPasswordModal(false);
-        } catch (err) {
-            console.error("Failed to reset password:", err);
-            alert("Error updating password.");
-        }
-    };
-
     const handleUpdateReview = async (e) => {
         e.preventDefault();
         if (!selectedReview._id) {
-            alert("Error: Cafe ID is missing!");
+            alert("Error: Review ID is missing!");
             return;
         }
         try {
@@ -139,7 +165,7 @@ const ManageReview = () => {
         }
         try {
             await api.delete(`/reviews/${selectedReview._id}`);
-            const updatedList = reviews.filter((u) => u._id !== selectedReview._id);
+            const updatedList = reviews.filter((r) => r._id !== selectedReview._id);
             setReviews(updatedList);
             alert("Review deleted successfully!");
             setShowDeleteModal(false);
@@ -174,10 +200,10 @@ const ManageReview = () => {
                         <tr>
                             <th className="first-column">No.</th>
                             <th className="second-column">Cafe</th>
-                            <th className="thrid-column">User</th>
-                            <th className="forth-column">Rating</th>
-                            <th className="fifth-column">Comment</th>
-                            <th className="sixth-column">Crowd Report</th>
+                            <th className="thrid-column-v2">User</th>
+                            <th className="forth-column-v3">Rating</th>
+                            <th className="fifth-column-v3">Comment</th>
+                            <th className="sixth-column-v3">Crowd Report</th>
                             <th className="final-column">Action</th>
                         </tr>
                     </thead>
@@ -186,13 +212,13 @@ const ManageReview = () => {
                             filteredReviews.map((review, index) => (
                                 <tr className="border-bottom border-dark" key={review._id}>
                                     <td className="first-column">{index + 1}.</td>
-                                    <td className="second-column">{review.cafe}</td>
-                                    <td className="thrid-column">{review.user}</td>
-                                    <td className="forth-column">{review.rating}</td>
-                                    <td className="fifth-column">{review.comment}</td>
-                                    <td className="sixth-column">{review.crowdReport}</td>
+                                    <td className="second-column">{review.cafe?.name || review.cafe || "N/A"}</td>
+                                    <td className="thrid-column-v2">{review.user?.name || review.user || "N/A"}</td>
+                                    <td className="forth-column-v3">{review.rating}⭐</td>
+                                    <td className="fifth-column-v3">{review.comment}</td>
+                                    <td className="sixth-column-v3 status-pill">{review.crowdReport}</td>
                                     <td className="final-column">
-                                        <Button onClick={() => handleOpenPasswordModal(review)} className="action-icon-btn btn-view">
+                                        <Button onClick={() => handleOpenViewModal(review)} className="action-icon-btn btn-view">
                                             <i className="bi bi-eye"></i>
                                         </Button>
                                         <Button onClick={() => handleOpenEditModal(review)} className="action-icon-btn btn-pencil">
@@ -216,109 +242,189 @@ const ManageReview = () => {
                     </tbody>
                 </table>
             </div>
-            {/* Add Review Modal */}
-            <div className="modal-container">
-                <Modal show={showAddModal} onHide={handleCloseAdd}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Add New Review</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <form onSubmit={handleAddReview}>
-                            <div className="modal-form-input">
-                                <label>Name :</label>
-                                <input required type="text" placeholder="Name" value={newReview.name} onChange={(e) => setNewReview({ ...newReview, name: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Email :</label>
-                                <input required type="text" placeholder="Email" value={newReview.email} onChange={(e) => setNewReview({ ...newReview, email: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Password :</label>
-                                <input required type="text" placeholder="Password" value={newReview.password} onChange={(e) => setNewReview({ ...newReview, password: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Role :</label>
-                                <select required value={newReview.role} onChange={(e) => setNewReview({ ...newReview, role: e.target.value })}>
-                                    <option value="" disabled>
-                                        Select Role
-                                    </option>
-                                    <option value="review">Review</option>
-                                    <option value="admin">Admin</option>
-                                </select>
-                            </div>
-                            <button className="submit-btn" type="submit">
-                                Add Review
-                            </button>
-                        </form>
-                    </Modal.Body>
-                </Modal>
-            </div>
 
-            {/* Change Password Modal */}
-            <div className="modal-container">
-                <Modal show={showPasswordModal} onHide={handleClosePassword}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Change Review Password</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <form onSubmit={handleResetPassword}>
-                            <div className="modal-form-input">
-                                <label>New Password :</label>
-                                <input required type="text" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-                            </div>
-                            <button className="submit-btn" type="submit">
-                                Update Password
-                            </button>
-                        </form>
-                    </Modal.Body>
-                </Modal>
-            </div>
+            {/* View Review Detail Modal */}
+            <Modal show={showViewModal} onHide={handleCloseView} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Review Details</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="review-details">
+                        <p>
+                            <strong>Review ID:</strong> {selectedReview._id}
+                        </p>
+                        <p>
+                            <strong>Cafe:</strong> {selectedReview.cafe?.name || selectedReview.cafe}
+                        </p>
+                        <p>
+                            <strong>User:</strong> {selectedReview.user?.name || selectedReview.user}
+                        </p>
+                        <p>
+                            <strong>Email:</strong> {selectedReview.user?.email || "N/A"}
+                        </p>
+                        <p>
+                            <strong>Rating:</strong> {selectedReview.rating}
+                        </p>
+                        <p>
+                            <strong>Comment:</strong> {selectedReview.comment}
+                        </p>
+                        <p>
+                            <strong>Crowd Report:</strong> <span className="status-pill">{selectedReview.crowdReport}</span>
+                        </p>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseView}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Add Review Modal */}
+            <Modal show={showAddModal} onHide={handleCloseAdd} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Add New Review</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form onSubmit={handleAddReview}>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Cafe :</Form.Label>
+                            <Form.Select required value={newReview.cafe} onChange={(e) => setNewReview({ ...newReview, cafe: e.target.value })}>
+                                <option value="" disabled>
+                                    Select Cafe
+                                </option>
+                                {cafesList.map((c) => (
+                                    <option key={c._id} value={c._id}>
+                                        {c.name}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>User :</Form.Label>
+                            <Form.Select required value={newReview.user} onChange={(e) => setNewReview({ ...newReview, user: e.target.value })}>
+                                <option value="" disabled>
+                                    Select User
+                                </option>
+                                {usersList.map((u) => (
+                                    <option key={u._id} value={u._id}>
+                                        {u.name} ({u.email})
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Rating (1 to 5) :</Form.Label>
+                            <Form.Select value={newReview.rating} onChange={(e) => setNewReview({ ...newReview, rating: Number(e.target.value) })}>
+                                <option value={1}>1 - Poor</option>
+                                <option value={2}>2 - Fair</option>
+                                <option value={3}>3 - Good</option>
+                                <option value={4}>4 - Very Good</option>
+                                <option value={5}>5 - Excellent</option>
+                            </Form.Select>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Comment :</Form.Label>
+                            <Form.Control required as="textarea" rows={3} placeholder="Write your review..." value={newReview.comment} onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })} />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Crowd Level :</Form.Label>
+                            <Form.Select value={newReview.crowdReport} onChange={(e) => setNewReview({ ...newReview, crowdReport: e.target.value })}>
+                                <option value="quiet">Quiet</option>
+                                <option value="moderate">Moderate</option>
+                                <option value="busy">Busy</option>
+                                <option value="packed">Packed</option>
+                            </Form.Select>
+                        </Form.Group>
+
+                        <Button className="submit-btn w-100 mt-2" type="submit">
+                            Add Review
+                        </Button>
+                    </Form>
+                </Modal.Body>
+            </Modal>
 
             {/* Edit Review Modal */}
-            <div className="modal-container">
-                <Modal show={showEditModal} onHide={handleCloseEdit}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Update Review</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <form onSubmit={handleUpdateReview}>
-                            <div className="modal-form-input">
-                                <label>Name :</label>
-                                <input required type="text" placeholder="Name" value={selectedReview.name || ""} onChange={(e) => setSelectedReview({ ...selectedReview, name: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Email :</label>
-                                <input required type="text" placeholder="Email" value={selectedReview.email || ""} onChange={(e) => setSelectedReview({ ...selectedReview, email: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Role :</label>
-                                <select required value={selectedReview.role} onChange={(e) => setSelectedReview({ ...selectedReview, role: e.target.value })}>
-                                    <option value="" disabled>
-                                        Select Role
+            <Modal show={showEditModal} onHide={handleCloseEdit} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Update Review</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form onSubmit={handleUpdateReview}>
+                        <Form.Group className="mb-3">
+                            <Form.Select required value={selectedReview.cafe || ""} onChange={(e) => setSelectedReview({ ...selectedReview, cafe: e.target.value })}>
+                                <option value="" disabled>
+                                    Select Cafe
+                                </option>
+                                {cafesList.map((c) => (
+                                    <option key={c._id} value={c._id}>
+                                        {c.name}
                                     </option>
-                                    <option value="review">Review</option>
-                                    <option value="admin">Admin</option>
-                                </select>
-                            </div>
-                            <button className="submit-btn" type="submit">
-                                Update Review
-                            </button>
-                        </form>
-                    </Modal.Body>
-                </Modal>
-            </div>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>User :</Form.Label>
+                            <Form.Select required value={selectedReview.user || ""} onChange={(e) => setSelectedReview({ ...selectedReview, user: e.target.value })}>
+                                <option value="" disabled>
+                                    Select User
+                                </option>
+                                {usersList.map((u) => (
+                                    <option key={u._id} value={u._id}>
+                                        {u.name} ({u.email})
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Rating (1 to 5) :</Form.Label>
+                            <Form.Select value={selectedReview.rating || 5} onChange={(e) => setSelectedReview({ ...selectedReview, rating: Number(e.target.value) })}>
+                                <option value={1}>1 - Poor</option>
+                                <option value={2}>2 - Fair</option>
+                                <option value={3}>3 - Good</option>
+                                <option value={4}>4 - Very Good</option>
+                                <option value={5}>5 - Excellent</option>
+                            </Form.Select>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Comment :</Form.Label>
+                            <Form.Control required as="textarea" rows={3} value={selectedReview.comment || ""} onChange={(e) => setSelectedReview({ ...selectedReview, comment: e.target.value })} />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Crowd Level :</Form.Label>
+                            <Form.Select value={selectedReview.crowdReport || "moderate"} onChange={(e) => setSelectedReview({ ...selectedReview, crowdReport: e.target.value })}>
+                                <option value="quiet">Quiet</option>
+                                <option value="moderate">Moderate</option>
+                                <option value="busy">Busy</option>
+                                <option value="packed">Packed</option>
+                            </Form.Select>
+                        </Form.Group>
+
+                        <Button className="submit-btn w-100 mt-2" type="submit">
+                            Update Review
+                        </Button>
+                    </Form>
+                </Modal.Body>
+            </Modal>
 
             {/* Delete Review Modal */}
             <div className="modal-container">
                 <Modal show={showDeleteModal} onHide={handleCloseDelete}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Confirm Delete {selectedReview.name}?</Modal.Title>
+                        <Modal.Title>Confirm Delete Review by {selectedReview.user}?</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <form onSubmit={handleDeleteReview}>
                             <div className="delete-form">
-                                <h3>Are you sure you want to delete {selectedReview.name}?</h3>
-                                <p>Once deleted all data related to {selectedReview.name} will be gone forever.</p>
+                                <h3>Are you sure you want to delete this review?</h3>
+                                <p>Once deleted, this review will be gone forever.</p>
                                 <button className="delete-btn" type="submit">
                                     Delete
                                 </button>
