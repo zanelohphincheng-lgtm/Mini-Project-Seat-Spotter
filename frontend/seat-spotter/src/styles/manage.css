@@ -131,12 +131,20 @@
     text-align: center;
 }
 
-.thrid-column-v3{
+.thrid-column-v3 {
     width: 100px;
     text-align: center;
 }
 .forth-column-v3,
-.fifth-column-v3,
+.fifth-column-v3 {
+    width: 250px;
+    text-align: center;
+    max-width: 250px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .sixth-column-v3 {
     width: 250px;
     text-align: center;
@@ -145,6 +153,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-transform: capitalize;
 }
 .fifth-column {
     width: 200px;
@@ -159,6 +168,7 @@
 .seventh-column {
     width: 150px;
     text-align: center;
+    text-transform: capitalize;
 }
 
 .final-column {
@@ -205,7 +215,7 @@
 }
 
 .btn-view {
-    background-color: #4e80a0;
+    background-color: #49afef; /* Blue */
     border-radius: 5px;
     margin-right: 5px;
 }
@@ -222,12 +232,12 @@
 }
 
 .btn-key:hover {
-    background-color: #0ea573; /* Green */
+    background-color: #0ea573; /* Blue */
     margin-right: 5px;
 }
 
 .btn-view:hover {
-    background-color: #43698a; /* Green */
+    background-color: rgb(79, 156, 223); /* Green */
     margin-right: 5px;
 }
 
@@ -335,4 +345,27 @@
     overflow: hidden;
     text-overflow: ellipsis;
     text-align: center;
+}
+
+
+.status-pending{
+    padding: 8px;
+    color: white;
+    background-color: #f59e0b;
+    border-radius: 25px;
+    text-transform: capitalize;
+}
+.status-comfirmed{
+    padding: 8px;
+    color: white;
+    background-color: #10b981;
+    border-radius: 25px;
+    text-transform: capitalize;
+}
+.status-cancelled{
+    padding: 8px;
+    color: white;
+    background-color: #ef4444;
+    border-radius: 25px;
+    text-transform: capitalize;
 }

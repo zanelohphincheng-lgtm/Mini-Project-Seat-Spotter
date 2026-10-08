@@ -11,6 +11,7 @@ import ManageUser from "./pages/ManageUser";
 import ManageCafe from "./pages/ManageCafe";
 import ManageReservation from "./pages/ManageReservation";
 import ManageReview from "./pages/ManageReview";
+import ViewBookmark from "./pages/ViewBookmark";
 
 function App() {
     return (
@@ -25,6 +26,7 @@ function App() {
                 <Route path="/manage-cafe" element={<ManageCafe />} />
                 <Route path="/manage-reservation" element={<ManageReservation />} />
                 <Route path="/manage-review" element={<ManageReview />} />
+                <Route path="/user-bookmark" element={<ViewBookmark />} />
             </Routes>
         </BrowserRouter>
     );

@@ -111,7 +111,11 @@ const ManageReview = () => {
     };
 
     const handleOpenEditModal = (review) => {
-        setSelectedReview(review);
+        setSelectedReview({
+            ...review,
+            cafe: review.cafe?._id || review.cafe || "",
+            user: review.user?._id || review.user || "",
+        });
         setShowEditModal(true);
     };
 

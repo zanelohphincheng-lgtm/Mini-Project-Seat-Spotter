@@ -54,7 +54,7 @@ const ManageReservation = () => {
         partySize: 1,
         status: "pending",
     });
-    
+
     // Fetching existing cafes and users as option for add and edit
     useEffect(() => {
         fetchOptions();
@@ -117,7 +117,15 @@ const ManageReservation = () => {
     };
 
     const handleOpenEditModal = (reservation) => {
-        setSelectedReservation(reservation);
+        setSelectedReservation({
+            _id: reservation._id,
+            cafe: reservation.cafe?._id || reservation.cafe || "",
+            user: reservation.user?._id || reservation.user || "",
+            bookingDate: reservation.bookingDate?.split("T")[0] || "",
+            timeSlot: reservation.timeSlot || "",
+            partySize: reservation.partySize || 1,
+            status: reservation.status || "pending",
+        });
         setShowEditModal(true);
     };
 
@@ -221,7 +229,7 @@ const ManageReservation = () => {
                                     <td className="first-column">{index + 1}.</td>
                                     <td className="second-column">{reservation.cafe?.name || reservation.cafe || "N/A"}</td>
                                     <td className="thrid-column-v2">{reservation.user?.name || reservation.user || "N/A"}</td>
-                                    <td className="forth-column-v2">{reservation.bookingDate}</td>
+                                    <td className="forth-column-v2">{reservation.bookingDate?.split("T")[0] || ""}</td>
                                     <td className="fifth-column">{reservation.timeSlot}</td>
                                     <td className="sixth-column">{reservation.partySize}</td>
                                     <td className="seventh-column status-pill">{reservation.status}</td>
@@ -280,7 +288,7 @@ const ManageReservation = () => {
                             <strong>Party Size:</strong> {selectedReservation.partySize} people
                         </p>
                         <p>
-                            <strong>Status:</strong> <span className="status-pill">{selectedReservation.status}</span>
+                            <strong>Status:</strong> <span className={selectedReservation.status === "comfirmed" ? "status-comfirmed" : selectedReservation.status === "pending" ? "status-pending" : "status-cancelled"}>{selectedReservation.status}</span>
                         </p>
                     </div>
                 </Modal.Body>
@@ -427,7 +435,7 @@ const ManageReservation = () => {
             <div className="modal-container">
                 <Modal show={showDeleteModal} onHide={handleCloseDelete}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Confirm Delete Reservation by {selectedReservation.user}?</Modal.Title>
+                        <Modal.Title>Confirm Delete Reservation</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <form onSubmit={handleDeleteReservation}>

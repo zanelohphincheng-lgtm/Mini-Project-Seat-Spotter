@@ -10,6 +10,7 @@ const Cafes = () => {
     const [selectedCafe, setSelectedCafe] = useState(null);
     const [cafeReviews, setCafeReviews] = useState([]);
     const [showCafeDetailModal, setShowCafeDetailModal] = useState();
+    const [userBookmarks, setUserBookmarks] = useState([]);
 
     // Check if user is logged in
     const token = localStorage.getItem("token");
@@ -28,6 +29,8 @@ const Cafes = () => {
         setShowCafeDetailModal(true);
         // Fetch reviews for the clicked cafe
         fetchCafeReviews(cafe._id);
+        // Check if this cafe is bookmarked by the user
+        setIsBookmarked(userBookmarks.includes(cafe._id));
     };
 
     const fetchCafeReviews = async (cafeId) => {
@@ -47,13 +50,24 @@ const Cafes = () => {
 
     // Toggle Bookmark
     const handleToggleBookmark = async () => {
-        try {
-            setIsBookmarked(!isBookmarked);
-            await api.post(`/cafes/${selectedCafe._id}/bookmark`);
-        } catch (err) {
-            console.error("Failed to update bookmark:", err);
+    try {
+        const nextState = !isBookmarked;
+        setIsBookmarked(nextState);
+        
+        // Update local array tracker
+        if (nextState) {
+            setUserBookmarks([...userBookmarks, selectedCafe._id]);
+        } else {
+            setUserBookmarks(userBookmarks.filter(id => id !== selectedCafe._id));
         }
-    };
+
+        await api.post(`/cafes/${selectedCafe._id}/bookmark`);
+    } catch (err) {
+        console.error("Failed to update bookmark:", err);
+        // Revert UI state if API fails
+        setIsBookmarked(!isBookmarked);
+    }
+};
 
     // Submit Reservation
     const handleReservationSubmit = async (e) => {
@@ -95,6 +109,9 @@ const Cafes = () => {
 
     useEffect(() => {
         fetchCafes();
+        if (isLoggedIn) {
+            fetchUserBookmarks();
+        }
     }, []);
 
     const fetchCafes = async () => {
@@ -103,6 +120,17 @@ const Cafes = () => {
             setCafes(res.data);
         } catch (err) {
             console.error("Error fetching cafes:", err);
+        }
+    };
+
+    const fetchUserBookmarks = async () => {
+        try {
+            const res = await api.get("/users/bookmarks"); // Adjust to match your backend bookmark route
+            // Assuming res.data is an array of cafe objects or IDs
+            const bookmarkIds = res.data.map((b) => b._id || b);
+            setUserBookmarks(bookmarkIds);
+        } catch (err) {
+            console.error("Failed to fetch bookmarks:", err);
         }
     };
 
@@ -217,11 +245,11 @@ const Cafes = () => {
                         <hr />
 
                         <div>
-                            { !isLoggedIn ? (
+                            {!isLoggedIn ? (
                                 <div className="warning-sign">
                                     <p>Login first to make Reservation or Leave a Review</p>
                                 </div>
-                            ): selectedCafe.isOpen ? (
+                            ) : selectedCafe.isOpen ? (
                                 <>
                                     {/* Reservation Form */}
                                     <div className="mb-4">
