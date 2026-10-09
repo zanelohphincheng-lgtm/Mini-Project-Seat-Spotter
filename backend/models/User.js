@@ -22,6 +22,7 @@ const UserSchema = new mongoose.Schema({
     bookmark: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Cafe",
+        default: [],
     }],
 });
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../utils/api";
 import Navbar from "../components/navbar";
-import "../styles/manage.css";
+import "../styles/bookmark.css";
 
 const ViewBookmarks = () => {
     const [bookmarkedCafes, setBookmarkedCafes] = useState([]);

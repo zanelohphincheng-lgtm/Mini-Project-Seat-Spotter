@@ -25,7 +25,6 @@ const Cafes = () => {
         setSelectedCafe(cafe);
         setNewReservation({ date: "", time: "", guests: 1 });
         setNewReview({ rating: 5, comment: "", crowdReport: "moderate" });
-        setIsBookmarked(false);
         setShowCafeDetailModal(true);
         // Fetch reviews for the clicked cafe
         fetchCafeReviews(cafe._id);
@@ -50,24 +49,33 @@ const Cafes = () => {
 
     // Toggle Bookmark
     const handleToggleBookmark = async () => {
-    try {
+        if (!selectedCafe || !selectedCafe._id) return;
+
+        const cafeId = selectedCafe._id;
         const nextState = !isBookmarked;
+
+        // Optimistic UI Update
         setIsBookmarked(nextState);
-        
-        // Update local array tracker
         if (nextState) {
-            setUserBookmarks([...userBookmarks, selectedCafe._id]);
+            setUserBookmarks((prev) => [...prev, cafeId]);
         } else {
-            setUserBookmarks(userBookmarks.filter(id => id !== selectedCafe._id));
+            setUserBookmarks((prev) => prev.filter((id) => id !== cafeId));
         }
 
-        await api.post(`/cafes/${selectedCafe._id}/bookmark`);
-    } catch (err) {
-        console.error("Failed to update bookmark:", err);
-        // Revert UI state if API fails
-        setIsBookmarked(!isBookmarked);
-    }
-};
+        try {
+            // Pass empty object {} as body to satisfy Axios/Express
+            await api.post(`/cafes/${cafeId}/bookmark`, {});
+        } catch (err) {
+            console.error("Failed to update bookmark:", err);
+            // Revert UI if API call fails
+            setIsBookmarked(!nextState);
+            if (!nextState) {
+                setUserBookmarks((prev) => [...prev, cafeId]);
+            } else {
+                setUserBookmarks((prev) => prev.filter((id) => id !== cafeId));
+            }
+        }
+    };
 
     // Submit Reservation
     const handleReservationSubmit = async (e) => {
@@ -126,8 +134,8 @@ const Cafes = () => {
     const fetchUserBookmarks = async () => {
         try {
             const res = await api.get("/users/bookmarks"); // Adjust to match your backend bookmark route
-            // Assuming res.data is an array of cafe objects or IDs
-            const bookmarkIds = res.data.map((b) => b._id || b);
+            const bookmarksArray = Array.isArray(res.data) ? res.data : [];
+            const bookmarkIds = bookmarksArray.map((b) => b._id || b);
             setUserBookmarks(bookmarkIds);
         } catch (err) {
             console.error("Failed to fetch bookmarks:", err);
