@@ -6,10 +6,37 @@ const Cafe = require("../models/Cafe");
 // @access  Private (Logged in Users)
 exports.createReservation = async (req, res) => {
     try {
-        const reservation = new Reservation(req.body);
+        const { cafeId, cafe, bookingDate, timeSlot, partySize, status } = req.body;
+        const targetCafe = cafeId || cafe;
+        const userId = req.user?.userId || req.user?._id;
+
+        const bookingStatus = status || "pending";
+
+        if (!targetCafe) {
+            return res.status(400).json({ success: false, message: "Cafe ID is required." });
+        }
+
+        // Create and save the new reservation
+        const reservation = new Reservation({
+            user: userId,
+            cafe: targetCafe,
+            bookingDate,
+            timeSlot,
+            partySize,
+            status: bookingStatus
+        });
         await reservation.save();
-        res.status(201).json(reservation);
+
+        // Only count towards current capacity if status is confirmed
+        if (bookingStatus === "confirmed") {
+            await Cafe.findByIdAndUpdate(targetCafe, {
+                $inc: { currentCapacity: Number(partySize) }
+            });
+        }
+
+        res.status(201).json({ message: "Reservation submitted successfully!", reservation });
     } catch (error) {
+        console.error("Failed to create  reservation : ", error);
         res.status(400).json({ error: error.message }); // Returns 400 Bad Request
     }
 };
@@ -47,23 +74,48 @@ exports.getReservations = async (req, res) => {
 // @access  Private
 exports.updateReservation = async (req, res) => {
     try {
-        let reservation = await Reservation.findById(req.params.id);
+        const reservationId = req.params.id;
+        const oldReservation = await Reservation.findById(reservationId);
 
-        if (!reservation) {
+        if (!oldReservation) {
             return res.status(404).json({ success: false, message: "Reservation not found." });
         }
 
-        // Ensure non-admins can only update their own reservations
-        if (req.user.role !== "admin" && reservation.user.toString() !== req.user.id) {
-            return res.status(403).json({ success: false, message: "Not authorized to update this booking." });
+        const oldStatus = oldReservation.status;
+        const oldPartySize = oldReservation.partySize;
+        const cafeId = oldReservation.cafe;
+
+        // Extract new values from request body or keep old ones
+        const newStatus = req.body.status !== undefined ? req.body.status : oldStatus;
+        const newPartySize = req.body.partySize !== undefined ? Number(req.body.partySize) : oldPartySize;
+
+        // Update the reservation in the database
+        const updatedReservation = await Reservation.findByIdAndUpdate(
+            reservationId, 
+            req.body, 
+            { returnDocument: 'after', runValidators: true }
+        );
+
+        // --- STABLE CAPACITY ADJUSTMENT LOGIC ---
+        if (oldStatus !== "confirmed" && newStatus === "confirmed") {
+            // Moved TO confirmed -> Add capacity back
+            await Cafe.findByIdAndUpdate(cafeId, {
+                $inc: { currentCapacity: newPartySize }
+            });
+        } else if (oldStatus === "confirmed" && newStatus !== "confirmed") {
+            // Moved FROM confirmed to pending/cancelled -> Remove capacity
+            await Cafe.findByIdAndUpdate(cafeId, {
+                $inc: { currentCapacity: -oldPartySize }
+            });
+        } else if (oldStatus === "confirmed" && newStatus === "confirmed" && oldPartySize !== newPartySize) {
+            // Stayed confirmed, but party size changed -> Adjust the difference
+            const difference = newPartySize - oldPartySize;
+            await Cafe.findByIdAndUpdate(cafeId, {
+                $inc: { currentCapacity: difference }
+            });
         }
 
-        reservation = await Reservation.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-            runValidators: true,
-        });
-
-        res.status(200).json({ success: true, data: reservation });
+        res.status(200).json({ success: true, data: updatedReservation });
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
     }
@@ -74,11 +126,22 @@ exports.updateReservation = async (req, res) => {
 // @access  Private
 exports.deleteReservation = async (req, res) => {
     try {
-        const reservation = await Reservation.findById(req.params.id);
+        const reservationId = req.params.id;
+        const reservation = await Reservation.findById(reservationId);
 
         if (!reservation) {
             return res.status(404).json({ success: false, message: "Reservation not found." });
         }
+
+        // If the reservation was confirmed, decrement the cafe's current capacity
+        if (reservation.status === "confirmed") {
+            await Cafe.findByIdAndUpdate(reservation.cafe, {
+                $inc: { currentCapacity: -reservation.partySize }
+            });
+        }
+
+        // Delete the reservation
+        await Reservation.findByIdAndDelete(reservationId);
 
         // Ownership check
         if (req.user.role !== "admin" && reservation.user.toString() !== req.user.id) {

@@ -48,7 +48,7 @@ const Navbar = () => {
                             </Link>
                             {/* Logout Button */}
                             <button onClick={onLogout} className="btn-logout-custom">
-                                <i className="bi bi-box-arrow-right"></i>
+                                <i className="bi bi-box-arrow-right logout-icon"></i>
                                 Logout
                             </button>
                         </>

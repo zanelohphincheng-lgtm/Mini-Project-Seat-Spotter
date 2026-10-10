@@ -232,7 +232,9 @@ const ManageReservation = () => {
                                     <td className="forth-column-v2">{reservation.bookingDate?.split("T")[0] || ""}</td>
                                     <td className="fifth-column">{reservation.timeSlot}</td>
                                     <td className="sixth-column">{reservation.partySize}</td>
-                                    <td className="seventh-column status-pill">{reservation.status}</td>
+                                    <td className="seventh-column">
+                                        <span className={reservation.status === "confirmed" ? "status-pill-confirmed" : reservation.status === "pending" ? "status-pill-pending" : "status-pill-cancelled"}>{reservation.status}</span>
+                                    </td>
                                     <td className="final-column">
                                         <Button onClick={() => handleOpenViewModal(reservation)} className="action-icon-btn btn-view">
                                             <i className="bi bi-eye"></i>
@@ -288,7 +290,7 @@ const ManageReservation = () => {
                             <strong>Party Size:</strong> {selectedReservation.partySize} people
                         </p>
                         <p>
-                            <strong>Status:</strong> <span className={selectedReservation.status === "comfirmed" ? "status-comfirmed" : selectedReservation.status === "pending" ? "status-pending" : "status-cancelled"}>{selectedReservation.status}</span>
+                            <strong>Status:</strong> <span className={selectedReservation.status === "confirmed" ? "status-confirmed" : selectedReservation.status === "pending" ? "status-pending" : "status-cancelled"}>{selectedReservation.status}</span>
                         </p>
                     </div>
                 </Modal.Body>

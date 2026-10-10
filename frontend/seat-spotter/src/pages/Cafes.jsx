@@ -81,14 +81,18 @@ const Cafes = () => {
     const handleReservationSubmit = async (e) => {
         e.preventDefault();
         try {
+            const partyCount = Number(newReservation.guests);
+
             await api.post("/reservations", {
                 cafeId: selectedCafe._id,
                 bookingDate: newReservation.date,
                 timeSlot: newReservation.time,
-                partySize: Number(newReservation.guests),
+                partySize: partyCount,
+                status: "pending",
             });
-            alert("Reservation submitted successfully!");
+            alert("Reservation Submitted Successfully! Awaiting confirmation.");
             setNewReservation({ date: "", time: "", guests: 1 });
+            setShowCafeDetailModal(false);
         } catch (err) {
             console.error("Failed to create reservation:", err);
             alert("Failed to create reservation.");
@@ -191,7 +195,7 @@ const Cafes = () => {
                             <Modal.Title>{selectedCafe.name}</Modal.Title>
 
                             {/* Bookmark Icon */}
-                            <i className={`bi ${isBookmarked ? "bi-bookmark-fill text-warning" : "bi-bookmark"}`} style={{ fontSize: "1.5rem", cursor: "pointer" }} onClick={handleToggleBookmark} title={isBookmarked ? "Remove Bookmark" : "Add Bookmark"}></i>
+                            {isLoggedIn && <i className={`bi ${isBookmarked ? "bi-bookmark-fill text-warning" : "bi-bookmark"}`} style={{ fontSize: "1.5rem", cursor: "pointer" }} onClick={handleToggleBookmark} title={isBookmarked ? "Remove Bookmark" : "Add Bookmark"}></i>}
                         </div>
                     </Modal.Header>
                     <Modal.Body>
