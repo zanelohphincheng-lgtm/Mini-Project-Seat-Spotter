@@ -32,7 +32,7 @@ const ManageUser = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     // Form Inputs for Modals
-    const [newPassword, setNewPassword] = useState({ password: ""});
+    const [newPassword, setNewPassword] = useState({ password: "" });
     const [newUser, setNewUser] = useState({ name: "", email: "", password: "", role: "user" });
     const [selectedUser, setSelectedUser] = useState({ name: "", email: "", role: "user" });
 
@@ -60,7 +60,7 @@ const ManageUser = () => {
 
     const handleOpenPasswordModal = (user) => {
         setSelectedUser(user);
-        setNewPassword({ password: ""});
+        setNewPassword({ password: "" });
         setShowPasswordModal(true);
     };
 
@@ -103,7 +103,7 @@ const ManageUser = () => {
         try {
             await api.patch(`/users/${selectedUser._id}/reset-password`, newPassword);
             await fetchUsers();
-            setNewPassword({password: ""});
+            setNewPassword({ password: "" });
             alert(`Password updated successfully for ${selectedUser.name}!`);
             setShowPasswordModal(false);
         } catch (err) {
@@ -137,7 +137,7 @@ const ManageUser = () => {
         }
         try {
             await api.delete(`/users/${selectedUser._id}`);
-            const updatedList = users.filter((u) => u._id !== selectedUser._id)
+            const updatedList = users.filter((u) => u._id !== selectedUser._id);
             setUsers(updatedList);
             alert("User deleted successfully!");
             setShowDeleteModal(false);
@@ -199,13 +199,9 @@ const ManageUser = () => {
                                 </tr>
                             ))
                         ) : (
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td>
-                                    <p className="no-result">No User Found</p>
-                                </td>
-                            </tr>
+                            <td colSpan="7" className="text-center py-4">
+                                <p className="no-result">No User Found</p>
+                            </td>
                         )}
                     </tbody>
                 </table>
@@ -258,7 +254,7 @@ const ManageUser = () => {
                         <form onSubmit={handleResetPassword}>
                             <div className="modal-form-input">
                                 <label>New Password :</label>
-                                <input required type="text" placeholder="New Password" value={newPassword.password || ""} onChange={(e) => setNewPassword({password: e.target.value})} />
+                                <input required type="text" placeholder="New Password" value={newPassword.password || ""} onChange={(e) => setNewPassword({ password: e.target.value })} />
                             </div>
                             <button className="submit-btn" type="submit">
                                 Update Password

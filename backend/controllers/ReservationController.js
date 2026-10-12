@@ -50,7 +50,8 @@ exports.getReservations = async (req, res) => {
 
         // If user is NOT an admin, filter to only show THEIR reservations
         if (req.user.role !== "admin") {
-            query.user = req.user.id;
+            const currentUserId = req.user.id || req.user.userId || req.user._id;
+            query.user = currentUserId;
         }
 
         // .populate() replaces foreign key ObjectIds with actual object details

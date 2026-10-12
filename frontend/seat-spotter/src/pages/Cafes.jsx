@@ -11,6 +11,7 @@ const Cafes = () => {
     const [cafeReviews, setCafeReviews] = useState([]);
     const [showCafeDetailModal, setShowCafeDetailModal] = useState();
     const [userBookmarks, setUserBookmarks] = useState([]);
+    const navigate = useNavigate();
 
     // Check if user is logged in
     const token = localStorage.getItem("token");
@@ -258,7 +259,7 @@ const Cafes = () => {
 
                         <div>
                             {!isLoggedIn ? (
-                                <div className="warning-sign">
+                                <div onClick={() => navigate("/login")} className="warning-sign">
                                     <p>Login first to make Reservation or Leave a Review</p>
                                 </div>
                             ) : selectedCafe.isOpen ? (

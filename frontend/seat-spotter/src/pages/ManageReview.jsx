@@ -235,13 +235,9 @@ const ManageReview = () => {
                                 </tr>
                             ))
                         ) : (
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td>
-                                    <p className="no-result">No Review Found</p>
-                                </td>
-                            </tr>
+                            <td colSpan="7" className="text-center py-4">
+                                <p className="no-result">No Review Found</p>
+                            </td>
                         )}
                     </tbody>
                 </table>
