@@ -41,7 +41,7 @@ const ManageReview = () => {
         user: "",
         rating: 5,
         comment: "",
-        crowdReport: "moderate",
+        crowdReport: "",
     });
 
     const [selectedReview, setSelectedReview] = useState({
@@ -102,10 +102,9 @@ const ManageReview = () => {
         setNewReview({
             cafe: cafesList[0]?._id || "",
             user: usersList[0]?._id || "",
-            bookingDate: "",
-            timeSlot: "12:00",
-            partySize: 1,
-            status: "pending",
+            rating: 5,
+            comment: "",
+            crowdReport: "moderate",
         });
         setShowAddModal(true);
     };
@@ -220,7 +219,9 @@ const ManageReview = () => {
                                     <td className="thrid-column-v2">{review.user?.name || review.user || "N/A"}</td>
                                     <td className="forth-column-v3">{review.rating}⭐</td>
                                     <td className="fifth-column-v3">{review.comment}</td>
-                                    <td className="sixth-column-v3 status-pill">{review.crowdReport}</td>
+                                    <td className="sixth-column-v3">
+                                        <div className={review.crowdReport === "quiet" ? "status-pill-confirmed" : review.crowdReport === "moderate" ? "status-pill-pending" : "status-pill-cancelled"}>{review.crowdReport}</div>
+                                    </td>
                                     <td className="final-column">
                                         <Button onClick={() => handleOpenViewModal(review)} className="action-icon-btn btn-view">
                                             <i className="bi bi-eye"></i>
@@ -235,9 +236,11 @@ const ManageReview = () => {
                                 </tr>
                             ))
                         ) : (
-                            <td colSpan="7" className="text-center py-4">
-                                <p className="no-result">No Review Found</p>
-                            </td>
+                            <tr>
+                                <td colSpan="7" className="text-center py-4">
+                                    <p className="no-result">No Review Found</p>
+                                </td>
+                            </tr>
                         )}
                     </tbody>
                 </table>
@@ -269,7 +272,7 @@ const ManageReview = () => {
                             <strong>Comment:</strong> {selectedReview.comment}
                         </p>
                         <p>
-                            <strong>Crowd Report:</strong> <span className="status-pill">{selectedReview.crowdReport}</span>
+                            <strong>Crowd Report:</strong> <span className={selectedReview.crowdReport === "quiet" ? "view-status-quiet" : selectedReview.crowdReport === "moderate" ? "view-status-moderate" : "view-status-packed"}>{selectedReview.crowdReport}</span>
                         </p>
                     </div>
                 </Modal.Body>
@@ -336,7 +339,6 @@ const ManageReview = () => {
                             <Form.Select value={newReview.crowdReport} onChange={(e) => setNewReview({ ...newReview, crowdReport: e.target.value })}>
                                 <option value="quiet">Quiet</option>
                                 <option value="moderate">Moderate</option>
-                                <option value="busy">Busy</option>
                                 <option value="packed">Packed</option>
                             </Form.Select>
                         </Form.Group>
@@ -402,7 +404,6 @@ const ManageReview = () => {
                             <Form.Select value={selectedReview.crowdReport || "moderate"} onChange={(e) => setSelectedReview({ ...selectedReview, crowdReport: e.target.value })}>
                                 <option value="quiet">Quiet</option>
                                 <option value="moderate">Moderate</option>
-                                <option value="busy">Busy</option>
                                 <option value="packed">Packed</option>
                             </Form.Select>
                         </Form.Group>
@@ -418,7 +419,7 @@ const ManageReview = () => {
             <div className="modal-container">
                 <Modal show={showDeleteModal} onHide={handleCloseDelete}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Confirm Delete Review by {selectedReview.user}?</Modal.Title>
+                        <Modal.Title>Confirm Delete Review</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <form onSubmit={handleDeleteReview}>

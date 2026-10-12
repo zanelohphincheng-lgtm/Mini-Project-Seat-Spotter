@@ -50,7 +50,7 @@ const ManageUser = () => {
     };
 
     // Filter users by search term
-    const filteredUsers = users.filter((u) => u.name?.toLowerCase().includes(search.toLowerCase()) || u.email?.toLowerCase().includes(search.toLowerCase()));
+    const filteredUsers = users.filter((u) => u.name?.toLowerCase().includes(search.toLowerCase()) || u.email?.toLowerCase().includes(search.toLowerCase()) || u.role?.toLowerCase().includes(search.toLowerCase()));
 
     // --- Modal Handlers ---
     const handleOpenAddModal = () => {
@@ -163,7 +163,7 @@ const ManageUser = () => {
             <h3 className="manage-title">Manage User</h3>
             <div className="search-bar-container">
                 <i className="bi bi-search search-icon"></i>
-                <input required className="search-input" type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="name, name@example.com" />
+                <Form.Control required className="search-input" type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="name, name@example.com" />
             </div>
 
             <div className="manage-table-card">
@@ -184,7 +184,9 @@ const ManageUser = () => {
                                     <td className="first-column">{index + 1}.</td>
                                     <td className="second-column">{user.name}</td>
                                     <td className="thrid-column">{user.email}</td>
-                                    <td className="forth-column">{user.role}</td>
+                                    <td className="forth-column">
+                                        <div className={user.role === "admin" ? "admin-pill" : "user-pill"}>{user.role}</div>
+                                    </td>
                                     <td className="final-column">
                                         <Button onClick={() => handleOpenPasswordModal(user)} className="action-icon-btn btn-key">
                                             <i className="bi bi-key"></i>
@@ -199,9 +201,11 @@ const ManageUser = () => {
                                 </tr>
                             ))
                         ) : (
-                            <td colSpan="7" className="text-center py-4">
-                                <p className="no-result">No User Found</p>
-                            </td>
+                            <tr>
+                                <td colSpan="5" className="text-center py-4">
+                                    <p className="no-result">No User Found</p>
+                                </td>
+                            </tr>
                         )}
                     </tbody>
                 </table>
@@ -213,33 +217,33 @@ const ManageUser = () => {
                         <Modal.Title>Add New User</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <form onSubmit={handleAddUser}>
-                            <div className="modal-form-input">
-                                <label>Name :</label>
-                                <input required type="text" placeholder="Name" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Email :</label>
-                                <input required type="text" placeholder="Email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Password :</label>
-                                <input required type="text" placeholder="Password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Role :</label>
-                                <select required value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}>
+                        <Form onSubmit={handleAddUser}>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Name :</Form.Label>
+                                <Form.Control required type="text" placeholder="Name" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Email :</Form.Label>
+                                <Form.Control required type="text" placeholder="Email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Password :</Form.Label>
+                                <Form.Control required type="text" placeholder="Password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Role :</Form.Label>
+                                <Form.Select required value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}>
                                     <option value="" disabled>
                                         Select Role
                                     </option>
                                     <option value="user">User</option>
                                     <option value="admin">Admin</option>
-                                </select>
-                            </div>
+                                </Form.Select>
+                            </Form.Group>
                             <button className="submit-btn" type="submit">
                                 Add User
                             </button>
-                        </form>
+                        </Form>
                     </Modal.Body>
                 </Modal>
             </div>
@@ -251,15 +255,15 @@ const ManageUser = () => {
                         <Modal.Title>Change User Password</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <form onSubmit={handleResetPassword}>
+                        <Form onSubmit={handleResetPassword}>
                             <div className="modal-form-input">
-                                <label>New Password :</label>
-                                <input required type="text" placeholder="New Password" value={newPassword.password || ""} onChange={(e) => setNewPassword({ password: e.target.value })} />
+                                <Form.Label>New Password :</Form.Label>
+                                <Form.Control required type="text" placeholder="New Password" value={newPassword.password || ""} onChange={(e) => setNewPassword({ password: e.target.value })} />
                             </div>
                             <button className="submit-btn" type="submit">
                                 Update Password
                             </button>
-                        </form>
+                        </Form>
                     </Modal.Body>
                 </Modal>
             </div>
@@ -271,29 +275,29 @@ const ManageUser = () => {
                         <Modal.Title>Update User</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <form onSubmit={handleUpdateUser}>
-                            <div className="modal-form-input">
-                                <label>Name :</label>
-                                <input required type="text" placeholder="Name" value={selectedUser.name || ""} onChange={(e) => setSelectedUser({ ...selectedUser, name: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Email :</label>
-                                <input required type="text" placeholder="Email" value={selectedUser.email || ""} onChange={(e) => setSelectedUser({ ...selectedUser, email: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Role :</label>
-                                <select required value={selectedUser.role} onChange={(e) => setSelectedUser({ ...selectedUser, role: e.target.value })}>
+                        <Form onSubmit={handleUpdateUser}>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Name :</Form.Label>
+                                <Form.Control required type="text" placeholder="Name" value={selectedUser.name || ""} onChange={(e) => setSelectedUser({ ...selectedUser, name: e.target.value })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Email :</Form.Label>
+                                <Form.Control required type="text" placeholder="Email" value={selectedUser.email || ""} onChange={(e) => setSelectedUser({ ...selectedUser, email: e.target.value })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Role :</Form.Label>
+                                <Form.Select required value={selectedUser.role} onChange={(e) => setSelectedUser({ ...selectedUser, role: e.target.value })}>
                                     <option value="" disabled>
                                         Select Role
                                     </option>
                                     <option value="user">User</option>
                                     <option value="admin">Admin</option>
-                                </select>
-                            </div>
+                                </Form.Select>
+                            </Form.Group>
                             <button className="submit-btn" type="submit">
                                 Update User
                             </button>
-                        </form>
+                        </Form>
                     </Modal.Body>
                 </Modal>
             </div>
@@ -305,15 +309,15 @@ const ManageUser = () => {
                         <Modal.Title>Confirm Delete {selectedUser.name}?</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <form onSubmit={handleDeleteUser}>
-                            <div className="delete-form">
+                        <Form onSubmit={handleDeleteUser}>
+                            <Form.Group className="delete-form">
                                 <h3>Are you sure you want to delete {selectedUser.name}?</h3>
                                 <p>Once deleted all data related to {selectedUser.name} will be gone forever.</p>
                                 <button className="delete-btn" type="submit">
                                     Delete
                                 </button>
-                            </div>
-                        </form>
+                            </Form.Group>
+                        </Form>
                     </Modal.Body>
                 </Modal>
             </div>

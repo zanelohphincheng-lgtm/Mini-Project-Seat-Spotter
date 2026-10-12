@@ -26,6 +26,7 @@ const ManageCafe = () => {
     const [search, setSearch] = useState("");
 
     // Modal Visibility States
+    const [showViewModal, setShowViewModal] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -51,6 +52,11 @@ const ManageCafe = () => {
     const filteredCafes = cafes.filter((c) => c.name?.toLowerCase().includes(search.toLowerCase()) || c.address?.toLowerCase().includes(search.toLowerCase()));
 
     // --- Modal Handlers ---
+    const handleOpenViewModal = (cafe) => {
+        setSelectedCafe(cafe);
+        setShowViewModal(true);
+    };
+
     const handleOpenAddModal = () => {
         setNewCafe({ name: "", address: "", city: "", openingHours: "", isOpen: true, currentCapacity: 0, maxCapacityPerSlot: 20, description: "", imageUrl: "" });
         setShowAddModal(true);
@@ -67,6 +73,7 @@ const ManageCafe = () => {
     };
 
     // Handle close
+    const handleCloseView = () => setShowViewModal(false);
     const handleCloseAdd = () => setShowAddModal(false);
     const handleCloseEdit = () => setShowEditModal(false);
     const handleCloseDelete = () => setShowDeleteModal(false);
@@ -171,6 +178,9 @@ const ManageCafe = () => {
                                     <td className="column-8">{cafe.maxCapacityPerSlot}</td>
                                     <td className="column-9">{cafe.description}</td>
                                     <td className="column-10">
+                                        <Button onClick={() => handleOpenViewModal(cafe)} className="action-icon-btn btn-view">
+                                            <i className="bi bi-eye"></i>
+                                        </Button>
                                         <Button onClick={() => handleOpenEditModal(cafe)} className="action-icon-btn btn-pencil">
                                             <i className="bi bi-pencil"></i>
                                         </Button>
@@ -181,13 +191,65 @@ const ManageCafe = () => {
                                 </tr>
                             ))
                         ) : (
-                            <td colSpan="7" className="text-center py-4">
-                                <p className="no-result">No Cafe Found</p>
-                            </td>
+                            <tr>
+                                <td colSpan="10" className="text-center py-4">
+                                    <p className="no-result">No Cafe Found</p>
+                                </td>
+                            </tr>
                         )}
                     </tbody>
                 </table>
             </div>
+
+            {/* View Cafe Detail Modal */}
+            <Modal show={showViewModal} onHide={handleCloseView} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Cafe Details</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="Cafe-details">
+                        <p>
+                            <strong>Cafe ID:</strong> {selectedCafe._id}
+                        </p>
+                        <p>
+                            <strong>Name:</strong> {selectedCafe.name}
+                        </p>
+                        <p>
+                            <strong>Address:</strong> {selectedCafe.address}
+                        </p>
+                        <p>
+                            <strong>City:</strong> {selectedCafe.city}
+                        </p>
+                        <p>
+                            <strong>Opening Hours:</strong> {selectedCafe.openingHours}
+                        </p>
+                        <p>
+                            <strong>Status:</strong> <span className={selectedCafe.isOpen ? "view-status-open" : "view-status-close"}>{selectedCafe.isOpen ? "Open" : "Close"}</span>
+                        </p>
+                        <p>
+                            <strong>Current Capacityt:</strong> {selectedCafe.currentCapacity}
+                        </p>
+                        <p>
+                            <strong>Max Capacity:</strong> {selectedCafe.maxCapacityPerSlot} people
+                        </p>
+                        <p>
+                            <strong>Description:</strong> {selectedCafe.description}
+                        </p>
+                        <div className="view-cafe-image-container">
+                            <p>
+                                <strong>Image URL:</strong>
+                            </p>
+                            <img src={selectedCafe.imageUrl || "N/A"} alt={selectedCafe.name} className="view-cafe-image" />
+                        </div>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseView}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
             {/* Add Cafe Modal */}
             <div className="modal-container">
                 <Modal show={showAddModal} onHide={handleCloseAdd}>
@@ -195,53 +257,53 @@ const ManageCafe = () => {
                         <Modal.Title>Add New Cafe</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <form onSubmit={handleAddCafe}>
-                            <div className="modal-form-input">
-                                <label>Name :</label>
-                                <input required type="text" placeholder="Name" value={newCafe.name} onChange={(e) => setNewCafe({ ...newCafe, name: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Address :</label>
-                                <input required type="text" placeholder="Address" value={newCafe.address} onChange={(e) => setNewCafe({ ...newCafe, address: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>City :</label>
-                                <input required type="text" placeholder="City" value={newCafe.city} onChange={(e) => setNewCafe({ ...newCafe, city: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Opening Hour :</label>
-                                <input required type="text" placeholder="00:00 - 00:00" value={newCafe.openingHours} onChange={(e) => setNewCafe({ ...newCafe, openingHours: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Status :</label>
-                                <select required value={newCafe.isOpen} onChange={(e) => setNewCafe({ ...newCafe, isOpen: e.target.value === "true" })}>
+                        <Form onSubmit={handleAddCafe}>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Name :</Form.Label>
+                                <Form.Control required type="text" placeholder="Name" value={newCafe.name} onChange={(e) => setNewCafe({ ...newCafe, name: e.target.value })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Address :</Form.Label>
+                                <Form.Control required type="text" placeholder="Address" value={newCafe.address} onChange={(e) => setNewCafe({ ...newCafe, address: e.target.value })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>City :</Form.Label>
+                                <Form.Control required type="text" placeholder="City" value={newCafe.city} onChange={(e) => setNewCafe({ ...newCafe, city: e.target.value })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Opening Hour :</Form.Label>
+                                <Form.Control required type="text" placeholder="00:00 - 00:00" value={newCafe.openingHours} onChange={(e) => setNewCafe({ ...newCafe, openingHours: e.target.value })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Status :</Form.Label>
+                                <Form.Select required value={newCafe.isOpen} onChange={(e) => setNewCafe({ ...newCafe, isOpen: e.target.value === "true" })}>
                                     <option value="" disabled>
                                         Select Status
                                     </option>
                                     <option value="true">OPEN</option>
                                     <option value="false">CLOSE</option>
-                                </select>
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Current Capacity :</label>
-                                <input required min={0} type="text" placeholder="Current Capacity" value={newCafe.currentCapacity} onChange={(e) => setNewCafe({ ...newCafe, currentCapacity: Number(e.target.value) })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Max Capacity :</label>
-                                <input required min={5} type="text" placeholder="Max Capacity" value={newCafe.maxCapacityPerSlot} onChange={(e) => setNewCafe({ ...newCafe, maxCapacityPerSlot: Number(e.target.value) })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Description :</label>
-                                <input required type="text" placeholder="Description" value={newCafe.description} onChange={(e) => setNewCafe({ ...newCafe, description: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Image URL :</label>
-                                <input type="url" placeholder="Image URL" value={newCafe.imageUrl} onChange={(e) => setNewCafe({ ...newCafe, imageUrl: e.target.value })} />
-                            </div>
+                                </Form.Select>
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Current Capacity :</Form.Label>
+                                <Form.Control required min={0} max={newCafe.maxCapacityPerSlot} type="text" placeholder="Current Capacity" value={newCafe.currentCapacity} onChange={(e) => setNewCafe({ ...newCafe, currentCapacity: Number(e.target.value) })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Max Capacity :</Form.Label>
+                                <Form.Control required min={5} type="text" placeholder="Max Capacity" value={newCafe.maxCapacityPerSlot} onChange={(e) => setNewCafe({ ...newCafe, maxCapacityPerSlot: Number(e.target.value) })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Description :</Form.Label>
+                                <Form.Control required type="text" placeholder="Description" value={newCafe.description} onChange={(e) => setNewCafe({ ...newCafe, description: e.target.value })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Image URL :</Form.Label>
+                                <Form.Control type="url" placeholder="Image URL" value={newCafe.imageUrl} onChange={(e) => setNewCafe({ ...newCafe, imageUrl: e.target.value })} />
+                            </Form.Group>
                             <button className="submit-btn" type="submit">
                                 Add Cafe
                             </button>
-                        </form>
+                        </Form>
                     </Modal.Body>
                 </Modal>
             </div>
@@ -253,53 +315,53 @@ const ManageCafe = () => {
                         <Modal.Title>Update Cafe</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <form onSubmit={handleUpdateCafe}>
-                            <div className="modal-form-input">
-                                <label>Name</label>
-                                <input required type="text" placeholder="Name" value={selectedCafe.name || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, name: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Address</label>
-                                <input required type="text" placeholder="Address" value={selectedCafe.address || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, address: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>City</label>
-                                <input required type="text" placeholder="City" value={selectedCafe.city || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, city: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Opening Hours</label>
-                                <input required type="text" placeholder="00:00 - 00:00" value={selectedCafe.openingHours || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, openingHours: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Status</label>
-                                <select required value={selectedCafe.isOpen} onChange={(e) => setSelectedCafe({ ...selectedCafe, isOpen: e.target.value === "true" })}>
+                        <Form onSubmit={handleUpdateCafe}>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Name</Form.Label>
+                                <Form.Control required type="text" placeholder="Name" value={selectedCafe.name || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, name: e.target.value })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Address</Form.Label>
+                                <Form.Control required type="text" placeholder="Address" value={selectedCafe.address || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, address: e.target.value })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>City</Form.Label>
+                                <Form.Control required type="text" placeholder="City" value={selectedCafe.city || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, city: e.target.value })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Opening Hours</Form.Label>
+                                <Form.Control required type="text" placeholder="00:00 - 00:00" value={selectedCafe.openingHours || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, openingHours: e.target.value })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Status</Form.Label>
+                                <Form.Select required value={selectedCafe.isOpen} onChange={(e) => setSelectedCafe({ ...selectedCafe, isOpen: e.target.value === "true" })}>
                                     <option value="" disabled>
                                         Select Status
                                     </option>
                                     <option value="true">OPEN</option>
                                     <option value="false">CLOSE</option>
-                                </select>
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Current Capacity</label>
-                                <input required min={0} type="number" placeholder="Current Capacity" value={selectedCafe.currentCapacity || "0"} onChange={(e) => setSelectedCafe({ ...selectedCafe, currentCapacity: Number(e.target.value) })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Max Capacity</label>
-                                <input required min={5} type="number" placeholder="Max Capacity" value={selectedCafe.maxCapacityPerSlot || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, maxCapacityPerSlot: Number(e.target.value) })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Description</label>
-                                <input required type="text" placeholder="Description" value={selectedCafe.description || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, description: e.target.value })} />
-                            </div>
-                            <div className="modal-form-input">
-                                <label>Image URL</label>
-                                <input type="url" placeholder="Image URL" value={selectedCafe.imageUrl || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, imageUrl: e.target.value })} />
-                            </div>
+                                </Form.Select>
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Current Capacity</Form.Label>
+                                <Form.Control required min={0} max={selectedCafe.maxCapacityPerSlot} type="number" placeholder="Current Capacity" value={selectedCafe.currentCapacity || "0"} onChange={(e) => setSelectedCafe({ ...selectedCafe, currentCapacity: Number(e.target.value) })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Max Capacity</Form.Label>
+                                <Form.Control required min={5} type="number" placeholder="Max Capacity" value={selectedCafe.maxCapacityPerSlot || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, maxCapacityPerSlot: Number(e.target.value) })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Description</Form.Label>
+                                <Form.Control required type="text" placeholder="Description" value={selectedCafe.description || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, description: e.target.value })} />
+                            </Form.Group>
+                            <Form.Group className="modal-form-input">
+                                <Form.Label>Image URL</Form.Label>
+                                <Form.Control type="url" placeholder="Image URL" value={selectedCafe.imageUrl || ""} onChange={(e) => setSelectedCafe({ ...selectedCafe, imageUrl: e.target.value })} />
+                            </Form.Group>
                             <button className="submit-btn" type="submit">
                                 Update Cafe
                             </button>
-                        </form>
+                        </Form>
                     </Modal.Body>
                 </Modal>
             </div>
@@ -311,15 +373,15 @@ const ManageCafe = () => {
                         <Modal.Title>Confirm Delete {selectedCafe.name}?</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <form onSubmit={handleDeleteCafe}>
-                            <div className="delete-form">
+                        <Form onSubmit={handleDeleteCafe}>
+                            <Form.Group className="delete-form">
                                 <h3>Are you sure you want to delete {selectedCafe.name}?</h3>
                                 <p>Once deleted all data related to {selectedCafe.name} will be gone forever.</p>
                                 <button className="delete-btn" type="submit">
                                     Delete
                                 </button>
-                            </div>
-                        </form>
+                            </Form.Group>
+                        </Form>
                     </Modal.Body>
                 </Modal>
             </div>

@@ -108,7 +108,7 @@ const ViewReservation = () => {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="7" className="text-center py-4">
+                                <td colSpan="8" className="text-center py-4">
                                     <p className="no-result">No Reservations Found</p>
                                 </td>
                             </tr>

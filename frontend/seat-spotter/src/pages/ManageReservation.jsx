@@ -249,9 +249,11 @@ const ManageReservation = () => {
                                 </tr>
                             ))
                         ) : (
-                            <td colSpan="7" className="text-center py-4">
-                                <p className="no-result">No Reservation Found</p>
-                            </td>
+                            <tr>
+                                <td colSpan="8" className="text-center py-4">
+                                    <p className="no-result">No Reservation Found</p>
+                                </td>
+                            </tr>
                         )}
                     </tbody>
                 </table>
@@ -344,7 +346,7 @@ const ManageReservation = () => {
 
                         <Form.Group className="mb-3">
                             <Form.Label>Party Size :</Form.Label>
-                            <Form.Control required type="number" min="1" value={newReservation.partySize} onChange={(e) => setNewReservation({ ...newReservation, partySize: e.target.value })} />
+                            <Form.Control required type="number" min={1} max={10} value={newReservation.partySize} onChange={(e) => setNewReservation({ ...newReservation, partySize: e.target.value })} />
                         </Form.Group>
 
                         <Form.Group className="mb-3">
@@ -410,7 +412,7 @@ const ManageReservation = () => {
 
                         <Form.Group className="mb-3">
                             <Form.Label>Party Size :</Form.Label>
-                            <Form.Control required type="number" min="1" value={selectedReservation.partySize || 1} onChange={(e) => setSelectedReservation({ ...selectedReservation, partySize: e.target.value })} />
+                            <Form.Control required type="number" min={1} max={10} value={selectedReservation.partySize || 1} onChange={(e) => setSelectedReservation({ ...selectedReservation, partySize: e.target.value })} />
                         </Form.Group>
 
                         <Form.Group className="mb-3">
