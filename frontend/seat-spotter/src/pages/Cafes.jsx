@@ -247,7 +247,7 @@ const Cafes = () => {
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="review-box">
+                                    <div className="no-review-box">
                                         <p className="no-review-text">
                                             <strong>No reviews yet. Be the first to leave one!</strong>
                                         </p>
