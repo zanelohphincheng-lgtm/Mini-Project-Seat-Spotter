@@ -105,7 +105,7 @@ const Cafes = () => {
         e.preventDefault();
         try {
             await api.post("/reviews", {
-                cafeId: selectedCafe._id,
+                cafe: selectedCafe._id,
                 rating: newReview.rating,
                 crowdReport: newReview.crowdReport,
                 comment: newReview.comment,

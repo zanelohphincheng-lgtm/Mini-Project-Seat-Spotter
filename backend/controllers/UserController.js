@@ -25,7 +25,24 @@ exports.register = async (req, res) => {
         });
 
         await user.save();
-        res.status(201).json({ message: "User registered successfully" });
+        // Automatically generate a token for the new user
+        const token = jwt.sign(
+            { userId: user._id, userEmail: user.email, role: user.role }, 
+            process.env.JWT_SECRET_KEY, 
+            { expiresIn: process.env.JWT_EXPIRES_IN }
+        );
+
+        // Send back the token and user details immediately
+        res.status(201).json({ 
+            token,
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            },
+            message: "User registered successfully" 
+        });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

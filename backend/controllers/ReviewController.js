@@ -7,10 +7,17 @@ const User = require("../models/User");
 // @access  Private (Logged in Users)
 exports.createReview = async (req, res) => {
     try {
-        const review = new Review(req.body);
-        console.log(req.body)
+        const userId = req.user?.userId || req.user?._id;
+
+        const review = new Review({
+            cafe: req.body.cafe || req.body.cafeId,
+            user: userId, // Attached securely from the token middleware
+            rating: req.body.rating,
+            comment: req.body.comment,
+            crowdReport: req.body.crowdReport
+        });
+
         await review.save();
-        console.log(review)
         res.status(201).json(review);
     } catch (error) {
         console.log(error.message)

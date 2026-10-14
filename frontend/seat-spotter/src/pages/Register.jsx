@@ -20,10 +20,13 @@ const Register = () => {
                 email,
                 password,
             });
-            
-            navigate("/login");
-            console.log(response.data);
-            alert("Sign Up Successful!");
+            // Save token and user info so they are instantly logged in
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+
+            // Redirect straight to dashboard
+            navigate("/dashboard");
+            alert("Sign Up Successful! Welcome to SeatSpotter.");
         } catch (error) {
             console.log("Sign Up Error : ", error);
             setError(error.response?.data?.message || "Sign up failed. Please check your connection.");
