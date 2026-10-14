@@ -61,7 +61,7 @@ exports.toggleBookmark = async (req, res) => {
         const isBookmarked = bookmarksList.some(
             (id) => id.toString() === cafeId.toString()
         );
-
+        // To prevent double bookmark on the same cafe
         if (isBookmarked) {
             // Remove from user array
             await User.findByIdAndUpdate(userId, { 

@@ -91,10 +91,9 @@ const ManageReservation = () => {
               const userName = (r.user?.name || r.user || "").toString().toLowerCase();
               const bookingDate = (r.bookingDate || "").toString().toLowerCase();
               const timeSlot = (r.timeSlot || "").toString().toLowerCase();
-              const partySize = (r.partySize || "").toString().toLowerCase();
               const status = (r.status || "").toString().toLowerCase();
 
-              return cafeName.includes(query) || userName.includes(query) || bookingDate.includes(query) || timeSlot.includes(query) || partySize.includes(query) || status.includes(query);
+              return cafeName.includes(query) || userName.includes(query) || bookingDate.includes(query) || timeSlot.includes(query) || status.includes(query);
           })
         : [];
 
@@ -205,7 +204,7 @@ const ManageReservation = () => {
             <h3 className="manage-title">Manage Reservation</h3>
             <div className="search-bar-container">
                 <i className="bi bi-search search-icon"></i>
-                <input required className="search-input" type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="name, name@example.com" />
+                <input required className="search-input" type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cafe Name, username" />
             </div>
 
             <div className="manage-table-card">
@@ -227,8 +226,8 @@ const ManageReservation = () => {
                             filteredReservations.map((reservation, index) => (
                                 <tr className="border-bottom border-dark" key={reservation._id}>
                                     <td className="first-column">{index + 1}.</td>
-                                    <td className="second-column">{reservation.cafe?.name || reservation.cafe || "N/A"}</td>
-                                    <td className="thrid-column-v2">{reservation.user?.name || reservation.user || "N/A"}</td>
+                                    <td className="second-column">{reservation.cafe?.name || reservation.cafe || "!! N/A !!"}</td>
+                                    <td className="thrid-column-v2">{reservation.user?.name || reservation.user || "!! N/A !!"}</td>
                                     <td className="forth-column-v2">{reservation.bookingDate?.split("T")[0] || ""}</td>
                                     <td className="fifth-column">{reservation.timeSlot}</td>
                                     <td className="sixth-column">{reservation.partySize}</td>
@@ -273,13 +272,13 @@ const ManageReservation = () => {
                             <strong>Cafe:</strong> {selectedReservation.cafe?.name || selectedReservation.cafe}
                         </p>
                         <p>
-                            <strong>User:</strong> {selectedReservation.user?.name || selectedReservation.user}
+                            <strong>User:</strong> {selectedReservation.user?.name || selectedReservation.user || "!! N/A !!"}
                         </p>
                         <p>
-                            <strong>Email:</strong> {selectedReservation.user?.email || "N/A"}
+                            <strong>Email:</strong> {selectedReservation.user?.email || "!! N/A !!"}
                         </p>
                         <p>
-                            <strong>Booking Date:</strong> {selectedReservation.bookingDate}
+                            <strong>Booking Date:</strong> {selectedReservation.bookingDate?.split("T")[0]}
                         </p>
                         <p>
                             <strong>Time Slot:</strong> {selectedReservation.timeSlot}

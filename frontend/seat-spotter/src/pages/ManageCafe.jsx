@@ -143,7 +143,7 @@ const ManageCafe = () => {
             <h3 className="manage-title">Manage Cafe</h3>
             <div className="search-bar-container">
                 <i className="bi bi-search search-icon"></i>
-                <input required className="search-input" type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cafe Meow Meow :)" />
+                <input required className="search-input" type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cafe Name, Address" />
             </div>
 
             <div className="manage-table-card">
@@ -227,7 +227,7 @@ const ManageCafe = () => {
                             <strong>Status:</strong> <span className={selectedCafe.isOpen ? "view-status-open" : "view-status-close"}>{selectedCafe.isOpen ? "Open" : "Close"}</span>
                         </p>
                         <p>
-                            <strong>Current Capacityt:</strong> {selectedCafe.currentCapacity}
+                            <strong>Current Capacity:</strong> {selectedCafe.currentCapacity} people
                         </p>
                         <p>
                             <strong>Max Capacity:</strong> {selectedCafe.maxCapacityPerSlot} people

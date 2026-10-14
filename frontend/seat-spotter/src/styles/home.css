@@ -98,7 +98,7 @@
 }
 
 /* Responsive Tweaks */
-@media (max-width: 991px) {
+@media (max-width: 1017px) {
     .hero-image {
         height: 350px;
     }

@@ -8,9 +8,12 @@ const User = require("../models/User");
 exports.createReview = async (req, res) => {
     try {
         const review = new Review(req.body);
+        console.log(req.body)
         await review.save();
+        console.log(review)
         res.status(201).json(review);
     } catch (error) {
+        console.log(error.message)
         res.status(400).json({ error: error.message }); // Returns 400 Bad Request
     }
 };

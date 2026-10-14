@@ -197,3 +197,14 @@
     font-weight: bold;
     border: 1px solid #8c4242;
 }
+
+.title-bookmark{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 250px;
+}
+
+.bookmark-point{
+    margin-right: 5px;
+}

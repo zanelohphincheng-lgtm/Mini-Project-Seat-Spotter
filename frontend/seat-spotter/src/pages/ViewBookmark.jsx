@@ -171,7 +171,11 @@ const ViewBookmarks = () => {
                                     {/* Cafe Details */}
                                     <div className="card-detail-container">
                                         <div className="card-detail">
-                                            <h2 className="cafe-title">{cafe.name}</h2>
+                                            {/* Remove Bookmark Button */}
+                                            <div className="title-bookmark">
+                                                <h2 className="cafe-title">{cafe.name}</h2>
+                                                <i className={`bi bi-bookmark-fill text-warning bookmark-point`} style={{ fontSize: "1.5rem", cursor: "pointer" }} onClick={(e) => handleRemoveBookmark(e, cafe._id)} title={"Remove Bookmark"}></i>
+                                            </div>
 
                                             <div className="cafe-detail-item">
                                                 <i className="bi bi-clock detail-icon"></i>
@@ -187,11 +191,6 @@ const ViewBookmarks = () => {
                                         </div>
 
                                         {cafe.isOpen ? <div className="status-banner bg-open">OPEN</div> : <div className="status-banner bg-closed">CLOSE</div>}
-                                    </div>
-
-                                    {/* Remove Bookmark Button */}
-                                    <div className="p-3">
-                                        <i className={`bi bi-bookmark-fill text-warning`} style={{ fontSize: "1.5rem", cursor: "pointer" }} onClick={(e) => handleRemoveBookmark(e, cafe._id)} title={"Remove Bookmark"}></i>
                                     </div>
                                 </div>
                             ))}

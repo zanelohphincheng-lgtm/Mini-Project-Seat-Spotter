@@ -20,8 +20,8 @@ const Register = () => {
                 email,
                 password,
             });
-            localStorage.setItem("token", response.data.token);
-            navigate("/");
+            
+            navigate("/login");
             console.log(response.data);
             alert("Sign Up Successful!");
         } catch (error) {
